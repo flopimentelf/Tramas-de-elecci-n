@@ -1,0 +1,1088 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resultados | Taller de Diseño de Servicios 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js"></script>
+
+<style>
+:root {
+  --azul: #0875ff;
+  --verde: #00c878;
+  --amarillo: #ffd000;
+  --rojo: #ed382b;
+  --negro: #171717;
+  --linea: rgba(23,23,23,.3);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: white;
+  color: var(--negro);
+  font-family: Helvetica, Arial, sans-serif;
+}
+button, input, select { font: inherit; }
+
+/* PORTADA Y LLUVIA */
+.hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+  overflow: hidden;
+  background: white;
+}
+.hero-copy {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 25px 30px 22px 34px;
+  pointer-events: none;
+}
+.hero-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--linea);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.hero-meta { text-align: right; }
+.hero-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+.kicker {
+  margin-bottom: 22px;
+  padding: 7px 10px;
+  border: 1px solid var(--azul);
+  color: var(--azul);
+  font-size: 10px;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+.hero h1 {
+  margin: 0;
+  font-size: clamp(43px, 7vw, 100px);
+  letter-spacing: -.085em;
+  line-height: .9;
+}
+.hero h1 span { color: var(--azul); }
+.hero-description {
+  max-width: 350px;
+  margin-top: 28px;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.hero-note {
+  margin-top: 24px;
+  color: #555;
+  font-size: 10px;
+  line-height: 1.7;
+}
+.hero-footer {
+  padding-top: 13px;
+  border-top: 1px solid var(--linea);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.hero-divider {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: rgba(23,23,23,.45);
+}
+#rain {
+  position: absolute;
+  inset: 0 0 0 50%;
+  overflow: hidden;
+  pointer-events: none;
+}
+#rain canvas {
+  display: block;
+  mix-blend-mode: multiply;
+}
+
+/* RESULTADOS */
+.results {
+  padding: 36px 30px 30px;
+}
+.section-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 25px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--linea);
+}
+.section-label {
+  color: var(--azul);
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.section-top h2 {
+  margin: 10px 0 0;
+  font-size: clamp(32px, 5vw, 62px);
+  line-height: .94;
+  letter-spacing: -.065em;
+}
+.section-top p {
+  max-width: 410px;
+  color: #555;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--linea);
+  font-size: 11px;
+}
+.summary strong { font-weight: 700; }
+.day-navigation {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 0;
+}
+.day-navigation label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+}
+.day-navigation select {
+  min-width: 180px;
+  padding: 10px;
+  border: 1px solid var(--linea);
+  background: white;
+  color: var(--negro);
+  font-size: 11px;
+}
+.day-navigation p {
+  flex: 1;
+  margin: 0;
+  font-size: 10px;
+  color: #666;
+  line-height: 1.5;
+}
+.upload {
+  margin: 0 0 20px;
+  padding: 15px;
+  border: 1px solid var(--linea);
+  background: #fafafa;
+}
+.upload label {
+  display: block;
+  margin-bottom: 9px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+}
+.upload input {
+  max-width: 100%;
+  font-size: 11px;
+}
+.upload p {
+  margin: 9px 0 0;
+  color: #666;
+  font-size: 10px;
+  line-height: 1.6;
+}
+.status {
+  color: #555;
+  font-size: 10px;
+  margin-top: 8px;
+}
+
+/* PIZARRA CONTINUA */
+.board-wrap {
+  position: relative;
+  margin-top: 12px;
+  padding: 12px 12px 0;
+  border: 1px solid #777;
+  background: #ededed;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.8);
+}
+.board-wrap::before {
+  content: "";
+  position: absolute;
+  top: -12px;
+  left: 0;
+  right: 0;
+  height: 12px;
+  background: linear-gradient(
+    135deg,
+    #aaa 0 5%, #f5f5f5 5% 20%,
+    #d0d0d0 20% 25%, #f5f5f5 25% 40%,
+    #aaa 40% 45%, #f5f5f5 45% 60%,
+    #d0d0d0 60% 65%, #f5f5f5 65% 80%,
+    #aaa 80% 85%, #f5f5f5 85%
+  );
+  border: 1px solid #aaa;
+  border-bottom: 0;
+}
+.board {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  border: 1px solid #aaa;
+  border-bottom: 0;
+  background: #f4f4f4;
+}
+.street {
+  min-width: 0;
+  border-right: 1px solid #222;
+}
+.street:last-child { border-right: 0; }
+.street-heading {
+  padding: 12px 8px 9px;
+  text-align: center;
+  background: rgba(255,255,255,.6);
+  border-bottom: 1px solid #aaa;
+}
+.street-number {
+  display: block;
+  margin-bottom: 4px;
+  color: #777;
+  font-size: 8px;
+  letter-spacing: .1em;
+}
+.street-name {
+  font-size: clamp(13px, 1.5vw, 18px);
+  font-weight: 700;
+}
+.lane {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 345px;
+}
+.side {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: #ededed;
+}
+.side + .side { border-left: 1px solid #aaa; }
+.side-label {
+  padding: 8px 2px;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  background: rgba(255,255,255,.55);
+  border-bottom: 1px solid rgba(0,0,0,.12);
+}
+.side-count {
+  padding: 5px 2px;
+  text-align: center;
+  font-size: 9px;
+  color: #666;
+}
+.spheres {
+  flex: 1;
+  min-height: 250px;
+  display: flex;
+  flex-wrap: wrap-reverse;
+  align-content: flex-start;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0;
+  padding: 5px 3px 8px;
+  overflow: hidden;
+}
+.token {
+  flex: 0 0 39px;
+  width: 39px;
+  height: 39px;
+  margin: 0 -3px -3px;
+  clip-path: polygon(50% 0%,98% 35%,80% 94%,20% 94%,2% 35%);
+  opacity: .82;
+  mix-blend-mode: multiply;
+  border: none;
+  animation: caer .65s cubic-bezier(.2,.7,.3,1) both;
+}
+.token.blue { background: rgba(8,117,255,.84); }
+.token.green { background: rgba(0,145,82,.84); }
+.token.yellow { background: rgba(255,208,0,.88); }
+.token.red { background: rgba(196,48,26,.84); }
+@keyframes caer {
+  from { transform: translateY(-90px) rotate(-12deg); opacity: 0; }
+  70% { opacity: .9; }
+  to { transform: translateY(0) rotate(0); opacity: .82; }
+}
+.street-total {
+  padding: 7px;
+  text-align: center;
+  background: #f7f7f7;
+  border-top: 1px solid #aaa;
+  font-size: 9px;
+  color: #555;
+}
+.board-bottom {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 22px;
+  padding: 18px 12px 16px;
+  background: #d9d9d9;
+  border: 1px solid #aaa;
+  border-top: 0;
+}
+.board-legend {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 8px;
+}
+.legend-tile { min-width: 0; text-align: center; }
+.legend-shapes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
+  min-height: 53px;
+  padding: 4px;
+  background: #999;
+  border: 1px solid #777;
+}
+.legend-shapes .token {
+  flex: 0 0 23px;
+  width: 23px;
+  height: 23px;
+  margin: -1px;
+  animation: none;
+}
+.legend-tile p {
+  margin: 7px 0 0;
+  font-size: 9px;
+  line-height: 1.35;
+}
+.board-question { align-self: center; }
+.board-question h3 {
+  margin: 0 0 10px;
+  font-size: clamp(17px, 2vw, 26px);
+  letter-spacing: -.04em;
+}
+.board-question ol {
+  margin: 0;
+  padding-left: 17px;
+  font-size: 9px;
+  line-height: 1.7;
+}
+.board-foot {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px 0 0;
+  color: #555;
+  font-size: 9px;
+}
+.variables {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 15px;
+  margin-top: 24px;
+}
+.variable {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+}
+.variable .swatch {
+  width: 19px;
+  height: 19px;
+  flex: 0 0 19px;
+  clip-path: polygon(50% 0%,98% 35%,80% 94%,20% 94%,2% 35%);
+}
+.variable strong {
+  display: block;
+  font-size: 10px;
+  margin-bottom: 4px;
+}
+.variable small {
+  color: #666;
+  font-size: 9px;
+  line-height: 1.45;
+}
+.buenos-aires {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 35px;
+  padding: 20px 0;
+  border-top: 1px solid var(--linea);
+  border-bottom: 1px solid var(--linea);
+}
+.buenos-aires h3 {
+  margin: 0 0 10px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.buenos-aires p {
+  max-width: 550px;
+  color: #555;
+  font-size: 12px;
+  line-height: 1.7;
+}
+footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 14px 0 0;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+@media (max-width: 800px) {
+  .hero-copy { padding: 20px 15px 17px 18px; }
+  .hero-header { flex-direction: column; font-size: 9px; }
+  .hero-meta { text-align: left; }
+  .hero h1 { font-size: clamp(37px,8vw,60px); }
+  .hero-description { font-size: 11px; }
+  .results { padding: 28px 16px; }
+  .section-top { align-items: flex-start; flex-direction: column; }
+  .lane { min-height: 270px; }
+  .spheres { min-height: 190px; }
+  .token { flex-basis: 29px; width: 29px; height: 29px; }
+  .board-bottom { grid-template-columns: 1fr; }
+}
+@media (max-width: 520px) {
+  .hero { min-height: 90vh; }
+  .hero-copy { padding: 15px 10px 14px 14px; }
+  .hero-header { font-size: 8px; gap: 8px; }
+  .hero h1 { font-size: clamp(32px,8vw,44px); }
+  .kicker { font-size: 8px; padding: 5px; }
+  .hero-description { font-size: 10px; margin-top: 17px; }
+  .hero-note { font-size: 9px; }
+  .hero-footer { font-size: 7px; }
+  .board-wrap { padding: 8px 5px 0; }
+  .street-heading { padding: 9px 2px; }
+  .street-name { font-size: 12px; }
+  .lane { min-height: 210px; }
+  .spheres { min-height: 150px; padding: 4px 0; }
+  .token { flex-basis: 21px; width: 21px; height: 21px; margin: 0 -2px -2px; }
+  .side-label,.side-count { font-size: 8px; }
+  .board-bottom { padding: 12px 5px; gap: 15px; }
+  .board-legend { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .variables { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .buenos-aires { grid-template-columns: 1fr; }
+  footer { flex-direction: column; }
+}
+</style>
+</head>
+
+<body>
+
+<section class="hero">
+  <div id="rain"></div>
+  <div class="hero-divider"></div>
+
+  <div class="hero-copy">
+    <header class="hero-header">
+      <div>
+        Taller de Diseño de Servicios 2026<br>
+        Escuela de Arquitectura y Diseño · PUCV
+      </div>
+      <div class="hero-meta">
+        Proyecto de levantamiento<br>
+        de información física
+      </div>
+    </header>
+
+    <div class="hero-content">
+      <div class="kicker">Observación · Resultados de terreno</div>
+      <h1>Tramas de<br><span>elección.</span></h1>
+      <p class="hero-description">
+        Una visualización de las respuestas recogidas en terreno.
+        Cada ficha hace visible una percepción y, en conjunto,
+        las fichas revelan cómo se configuran las elecciones del recorrido.
+      </p>
+      <p class="hero-note">Resultados del levantamiento · Visualización pública</p>
+    </div>
+
+    <div class="hero-footer">
+      Valparaíso / Buenos Aires · 2026
+    </div>
+  </div>
+</section>
+
+<section class="results">
+  <div class="section-top">
+    <div>
+      <div class="section-label">01 / Resultados del levantamiento</div>
+      <h2>Un recorrido,<br>cuatro posibilidades.</h2>
+    </div>
+    <p>
+      Los datos se presentan por jornada y se organizan por calle,
+      variable de percepción y valoración positiva o negativa.
+      La acumulación de pentágonos permite observar la distribución
+      de las respuestas recogidas.
+    </p>
+  </div>
+
+  <div class="summary">
+    <span>Fecha: <strong id="fechaResumen">Sin datos cargados</strong></span>
+    <span>Ubicación: <strong id="lugarResumen">Valparaíso</strong></span>
+    <span>Respuestas: <strong id="totalResumen">0</strong></span>
+    <span>Calles observadas: <strong>4</strong></span>
+  </div>
+
+  <div class="day-navigation">
+    <label for="dia">Visualizar jornada</label>
+    <select id="dia">
+      <option value="">Esperando archivos de resultados</option>
+    </select>
+    <p id="mensajeDia">Carga los archivos CSV exportados desde la página de registro.</p>
+  </div>
+
+  <section class="upload">
+    <label for="archivos">Cargar resultados exportados (CSV)</label>
+    <input id="archivos" type="file" accept=".csv,text/csv" multiple>
+    <p>
+      Selecciona uno o varios archivos CSV. Esta página solo los lee
+      para visualizarlos. No modifica los archivos ni permite cambiar
+      las cantidades registradas.
+    </p>
+    <div class="status" id="estadoCarga">Todavía no se han cargado archivos.</div>
+  </section>
+
+  <div class="board-wrap">
+    <div class="board" id="board"></div>
+
+    <div class="board-bottom">
+      <div class="board-legend">
+        <div class="legend-tile">
+          <div class="legend-shapes">
+            <span class="token blue"></span><span class="token blue"></span>
+            <span class="token blue"></span><span class="token blue"></span>
+          </div>
+          <p>Seguridad</p>
+        </div>
+        <div class="legend-tile">
+          <div class="legend-shapes">
+            <span class="token yellow"></span><span class="token yellow"></span>
+            <span class="token yellow"></span><span class="token yellow"></span>
+          </div>
+          <p>Luminosidad</p>
+        </div>
+        <div class="legend-tile">
+          <div class="legend-shapes">
+            <span class="token red"></span><span class="token red"></span>
+            <span class="token red"></span><span class="token red"></span>
+          </div>
+          <p>Facilidad para caminar</p>
+        </div>
+        <div class="legend-tile">
+          <div class="legend-shapes">
+            <span class="token green"></span><span class="token green"></span>
+            <span class="token green"></span><span class="token green"></span>
+          </div>
+          <p>Vitalidad urbana</p>
+        </div>
+      </div>
+
+      <div class="board-question">
+        <h3>¿Qué calle prefieres?</h3>
+        <ol>
+          <li>Elige una calle y piensa cómo percibes sus características.</li>
+          <li>Identifica la variable que se registra en cada respuesta.</li>
+          <li>El lado izquierdo representa la valoración negativa (−) y el derecho, la positiva (+).</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="board-foot">
+    <span>Izquierda: valoración negativa (−)</span>
+    <span>Derecha: valoración positiva (+)</span>
+    <span>Una ficha representa una respuesta registrada</span>
+  </div>
+
+  <div class="variables">
+    <div class="variable">
+      <span class="swatch blue"></span>
+      <div><strong>Seguridad percibida</strong><small>Resguardo y sensación de seguridad.</small></div>
+    </div>
+    <div class="variable">
+      <span class="swatch yellow"></span>
+      <div><strong>Luminosidad percibida</strong><small>Luz y visibilidad del recorrido.</small></div>
+    </div>
+    <div class="variable">
+      <span class="swatch red"></span>
+      <div><strong>Facilidad para caminar</strong><small>Comodidad y facilidad de desplazamiento.</small></div>
+    </div>
+    <div class="variable">
+      <span class="swatch green"></span>
+      <div><strong>Vitalidad urbana</strong><small>Actividad y presencia de personas.</small></div>
+    </div>
+  </div>
+
+  <section class="buenos-aires">
+    <div>
+      <h3>02 / Continuidad territorial</h3>
+      <p>
+        Este sistema de visualización también acompañará el trabajo de
+        campo en Buenos Aires. Cuando se defina el lugar de observación,
+        se incorporarán sus resultados para comparar las percepciones
+        de ambos territorios.
+      </p>
+    </div>
+    <div>
+      <h3>Lectura de los datos</h3>
+      <p>
+        Las fichas muestran cantidades registradas, no porcentajes ni
+        mediciones objetivas de las calles. La comparación depende de
+        las respuestas recogidas en cada jornada.
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    <span>Taller de Diseño de Servicios 2026</span>
+    <span>Escuela de Arquitectura y Diseño · PUCV</span>
+    <span>Visualización de resultados</span>
+  </footer>
+</section>
+
+<script>
+/* LLUVIA DE PENTÁGONOS */
+(() => {
+  if (!window.Matter) return;
+
+  const { Engine, Render, Runner, Bodies, Body, Composite, Events } = Matter;
+  const contenedor = document.getElementById("rain");
+  const colores = [
+    "rgba(255,25,60,.57)",
+    "rgba(0,100,255,.55)",
+    "rgba(255,195,0,.62)",
+    "rgba(0,210,120,.55)"
+  ];
+
+  let ancho = Math.max(1, innerWidth / 2);
+  let alto = innerHeight;
+  let piezas = [];
+  let paredes = [];
+  let ultimo = performance.now();
+  let indice = 0;
+
+  const TAMANO = 40;
+  const MAXIMO = 204;
+
+  const motor = Engine.create({ enableSleeping: true });
+  motor.gravity.y = 1;
+  motor.gravity.scale = .001;
+  motor.positionIterations = 10;
+  motor.velocityIterations = 8;
+
+  const render = Render.create({
+    element: contenedor,
+    engine: motor,
+    options: {
+      width: ancho,
+      height: alto,
+      wireframes: false,
+      background: "transparent",
+      pixelRatio: Math.min(devicePixelRatio || 1, 2)
+    }
+  });
+
+  const runner = Runner.create({ delta: 1000 / 60 });
+
+  const azar = (min, max) => Math.random() * (max - min) + min;
+
+  function crearParedes() {
+    paredes.forEach(p => Composite.remove(motor.world, p));
+    const g = 160;
+    paredes = [
+      Bodies.rectangle(ancho/2, alto+g/2, ancho+g*2, g,
+        { isStatic:true, render:{visible:false} }),
+      Bodies.rectangle(-g/2, alto/2, g, alto*3,
+        { isStatic:true, render:{visible:false} }),
+      Bodies.rectangle(ancho+g/2, alto/2, g, alto*3,
+        { isStatic:true, render:{visible:false} })
+    ];
+    Composite.add(motor.world, paredes);
+  }
+
+  function crearPieza() {
+    if (piezas.length >= MAXIMO) return;
+    const x = azar(45, Math.max(46, ancho-45));
+    const p = Bodies.polygon(x, -80-azar(0,alto*.2), 5, 31, {
+      restitution: .005,
+      friction: .92,
+      frictionStatic: 1,
+      frictionAir: .018,
+      density: .0018,
+      slop: .01,
+      sleepThreshold: 35,
+      angle: azar(-.5,.5),
+      render: { visible:false }
+    });
+    p.colorPentagono = colores[indice++ % colores.length];
+    Body.setVelocity(p, { x:azar(-.65,.65), y:azar(0,.3) });
+    Body.setAngularVelocity(p, azar(-.012,.012));
+    piezas.push(p);
+    Composite.add(motor.world,p);
+  }
+
+  function dibujar(ctx,p) {
+    ctx.save();
+    ctx.translate(p.position.x,p.position.y);
+    ctx.rotate(p.angle);
+    ctx.beginPath();
+    for (let i=0;i<5;i++) {
+      const a=-Math.PI/2+i*Math.PI*2/5;
+      const x=Math.cos(a)*TAMANO;
+      const y=Math.sin(a)*TAMANO;
+      if (!i) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.closePath();
+    ctx.fillStyle=p.colorPentagono;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  Events.on(render,"afterRender",()=>{
+    const ctx=render.context;
+    ctx.save();
+    ctx.globalCompositeOperation="multiply";
+    piezas.forEach(p=>dibujar(ctx,p));
+    ctx.restore();
+  });
+
+  Events.on(motor,"beforeUpdate",()=>{
+    const ahora=performance.now();
+    if (ahora-ultimo>135 && piezas.length<MAXIMO) {
+      crearPieza();
+      ultimo=ahora;
+    }
+    piezas.forEach(p=>{
+      if (p.isSleeping) return;
+      if (p.speed<.045 && Math.abs(p.angularVelocity)<.01) {
+        Body.setVelocity(p,{x:0,y:0});
+        Body.setAngularVelocity(p,0);
+      }
+    });
+  });
+
+  Events.on(motor,"afterUpdate",()=>{
+    piezas=piezas.filter(p=>{
+      if (p.position.y>alto+TAMANO*4) {
+        Composite.remove(motor.world,p);
+        return false;
+      }
+      return true;
+    });
+  });
+
+  crearParedes();
+  for (let i=0;i<24;i++) crearPieza();
+
+  addEventListener("resize",()=>{
+    ancho=Math.max(1,innerWidth/2);
+    alto=innerHeight;
+    render.canvas.width=ancho*render.options.pixelRatio;
+    render.canvas.height=alto*render.options.pixelRatio;
+    render.canvas.style.width=ancho+"px";
+    render.canvas.style.height=alto+"px";
+    render.options.width=ancho;
+    render.options.height=alto;
+    crearParedes();
+  });
+
+  Runner.run(runner,motor);
+  Render.run(render);
+})();
+
+/* VISUALIZACIÓN DE ARCHIVOS CSV, SIN EDICIÓN DE DATOS */
+(() => {
+  const CALLES = ["Serrano","Cochrane","Blanco","Errázuriz"];
+  const VARIABLE_MAP = {
+    "seguridad percibida":"blue",
+    "seguridad":"blue",
+    "luminosidad percibida":"yellow",
+    "luminosidad":"yellow",
+    "facilidad para caminar":"red",
+    "transitabilidad":"red",
+    "vitalidad urbana percibida":"green",
+    "vitalidad urbana":"green"
+  };
+
+  const LUGARES = {
+    valparaiso:"Valparaíso · Barrio Puerto",
+    buenosaires:"Buenos Aires · Lugar por definir"
+  };
+
+  const $ = id => document.getElementById(id);
+  const selectorDia = $("dia");
+  const archivosInput = $("archivos");
+  const board = $("board");
+
+  let todosLosRegistros = [];
+  let registrosDia = [];
+  let animaciones = [];
+
+  function parseCSV(texto) {
+    const filas = [];
+    let fila = [], celda = "", entreComillas = false;
+
+    for (let i=0;i<texto.length;i++) {
+      const c=texto[i], siguiente=texto[i+1];
+
+      if (c === '"' && entreComillas && siguiente === '"') {
+        celda += '"'; i++;
+      } else if (c === '"') {
+        entreComillas = !entreComillas;
+      } else if (c === ',' && !entreComillas) {
+        fila.push(celda); celda="";
+      } else if ((c === '\n' || c === '\r') && !entreComillas) {
+        if (c === '\r' && siguiente === '\n') i++;
+        fila.push(celda);
+        if (fila.some(v=>v.trim()!=="")) filas.push(fila);
+        fila=[]; celda="";
+      } else {
+        celda += c;
+      }
+    }
+
+    fila.push(celda);
+    if (fila.some(v=>v.trim()!=="")) filas.push(fila);
+    if (!filas.length) return [];
+
+    const cabeceras=filas.shift().map(v=>v.trim().toLowerCase());
+    return filas.map(f=>{
+      const objeto={};
+      cabeceras.forEach((h,i)=>objeto[h]=(f[i]||"").trim());
+      return objeto;
+    });
+  }
+
+  function campo(obj, nombres) {
+    for (const nombre of nombres) {
+      if (obj[nombre] !== undefined && obj[nombre] !== "") return obj[nombre];
+    }
+    return "";
+  }
+
+  function normalizar(fila) {
+    const fecha=campo(fila,["fecha"]);
+    const lugarTexto=campo(fila,["lugar","ubicación","ubicacion"]).toLowerCase();
+    const calleTexto=campo(fila,["calle"]);
+    const valorTexto=campo(fila,["valoración","valoracion","lado"]).toLowerCase();
+    const variableTexto=campo(fila,["variable"]).toLowerCase();
+    const cantidad=Number(campo(fila,["cantidad","fichas","respuestas"]));
+
+    const calle=CALLES.find(c=>c.toLowerCase()===calleTexto.toLowerCase());
+    const variable=VARIABLE_MAP[variableTexto];
+    let valoracion="";
+
+    if (valorTexto.includes("negativ") || valorTexto==="-" || valorTexto==="−") {
+      valoracion="negativo";
+    } else if (valorTexto.includes("positiv") || valorTexto==="+" || valorTexto==="＋") {
+      valoracion="positivo";
+    }
+
+    const lugar=lugarTexto.includes("buenos") ? "buenosaires" : "valparaiso";
+
+    if (!fecha || !calle || !variable || !valoracion ||
+        !Number.isFinite(cantidad) || cantidad<=0) return null;
+
+    return { fecha, lugar, calle, variable, valoracion, cantidad };
+  }
+
+  function cargarArchivos(lista) {
+    todosLosRegistros=[];
+    registrosDia=[];
+    selectorDia.innerHTML="";
+    board.innerHTML="";
+    $("estadoCarga").textContent="Leyendo archivos…";
+
+    if (!lista.length) {
+      $("estadoCarga").textContent="Todavía no se han cargado archivos.";
+      actualizarResumen();
+      dibujarBoard();
+      return;
+    }
+
+    const tareas=[...lista].map(archivo =>
+      archivo.text().then(texto => ({
+        nombre:archivo.name,
+        filas:parseCSV(texto)
+      }))
+    );
+
+    Promise.all(tareas).then(resultados=>{
+      let rechazadas=0;
+
+      resultados.forEach(resultado=>{
+        resultado.filas.forEach(fila=>{
+          const registro=normalizar(fila);
+          if (registro) todosLosRegistros.push(registro);
+          else rechazadas++;
+        });
+      });
+
+      const dias=[...new Set(todosLosRegistros.map(r=>r.fecha))].sort();
+      const diaActual=new Date().toISOString().slice(0,10);
+
+      if (!dias.length) {
+        selectorDia.add(new Option("No hay registros válidos",""));
+        $("estadoCarga").textContent=
+          "No se encontraron filas válidas. Revisa que los CSV tengan las columnas Fecha, Lugar, Calle, Valoración, Variable y Cantidad.";
+        actualizarResumen();
+        dibujarBoard();
+        return;
+      }
+
+      dias.forEach(dia=>selectorDia.add(new Option(dia,dia)));
+
+      selectorDia.value=dias.includes(diaActual)?diaActual:dias[dias.length-1];
+      actualizarDia();
+
+      $("estadoCarga").textContent=
+        `${todosLosRegistros.length} registros cargados desde ${lista.length} archivo(s).`+
+        (rechazadas ? ` ${rechazadas} fila(s) no reconocidas.` : "");
+    }).catch(()=>{
+      $("estadoCarga").textContent="No se pudo leer uno de los archivos seleccionados.";
+    });
+  }
+
+  function actualizarDia() {
+    const dia=selectorDia.value;
+    registrosDia=todosLosRegistros.filter(r=>r.fecha===dia);
+    actualizarResumen();
+    dibujarBoard();
+  }
+
+  function actualizarResumen() {
+    const dia=selectorDia.value;
+    const filas=todosLosRegistros.filter(r=>r.fecha===dia);
+    const total=filas.reduce((s,r)=>s+r.cantidad,0);
+    const lugares=[...new Set(filas.map(r=>r.lugar))];
+
+    $("fechaResumen").textContent=dia||"Sin datos";
+    $("lugarResumen").textContent=lugares.map(l=>LUGARES[l]).join(" / ")||"Sin datos";
+    $("totalResumen").textContent=total;
+    $("mensajeDia").textContent=dia
+      ? `Visualizando las respuestas registradas el ${dia}.`
+      : "Carga los archivos CSV exportados desde la página de registro.";
+  }
+
+  function dibujarBoard() {
+    animaciones.forEach(clearTimeout);
+    animaciones=[];
+    board.innerHTML="";
+
+    CALLES.forEach((calle,index)=>{
+      const calleDatos=registrosDia.filter(r=>r.calle===calle);
+      const total=calleDatos.reduce((s,r)=>s+r.cantidad,0);
+      const articulo=document.createElement("article");
+      articulo.className="street";
+
+      articulo.innerHTML=`
+        <div class="street-heading">
+          <span class="street-number">CALLE 0${index+1}</span>
+          <div class="street-name">${calle}</div>
+        </div>
+        <div class="lane">
+          <div class="side" data-lado="negativo">
+            <div class="side-label">(−)</div>
+            <div class="side-count">0 fichas</div>
+            <div class="spheres"></div>
+          </div>
+          <div class="side" data-lado="positivo">
+            <div class="side-label">(＋)</div>
+            <div class="side-count">0 fichas</div>
+            <div class="spheres"></div>
+          </div>
+        </div>
+        <div class="street-total">${total} respuestas</div>
+      `;
+
+      board.appendChild(articulo);
+
+      ["negativo","positivo"].forEach(lado=>{
+        const side=articulo.querySelector(`[data-lado="${lado}"]`);
+        const zona=side.querySelector(".spheres");
+        const grupo=calleDatos.filter(r=>r.valoracion===lado);
+        const cantidadLado=grupo.reduce((s,r)=>s+r.cantidad,0);
+
+        side.querySelector(".side-count").textContent=
+          `${cantidadLado} ${cantidadLado===1?"ficha":"fichas"}`;
+
+        /*
+          Cada pentágono corresponde a una unidad registrada.
+          Se muestra un máximo por lado para conservar el rendimiento;
+          el total numérico siempre representa la cantidad completa.
+        */
+        const MAX_VISIBLES=150;
+        const fichas=[];
+
+        grupo.forEach(r=>{
+          const cantidad=Math.min(r.cantidad,MAX_VISIBLES-fichas.length);
+          for(let i=0;i<cantidad;i++) fichas.push(r.variable);
+        });
+
+        if(!fichas.length) return;
+
+        fichas.forEach((color,i)=>{
+          const ficha=document.createElement("span");
+          ficha.className=`token ${color}`;
+          ficha.style.animationDelay=`${Math.min(i*12,900)}ms`;
+          zona.appendChild(ficha);
+        });
+      });
+    });
+  }
+
+  archivosInput.addEventListener("change",e=>{
+    cargarArchivos(e.target.files);
+  });
+
+  selectorDia.addEventListener("change",actualizarDia);
+
+  function inicioVacio() {
+    CALLES.forEach((calle,i)=>{
+      const articulo=document.createElement("article");
+      articulo.className="street";
+      articulo.innerHTML=`
+        <div class="street-heading">
+          <span class="street-number">CALLE 0${i+1}</span>
+          <div class="street-name">${calle}</div>
+        </div>
+        <div class="lane">
+          ${["negativo","positivo"].map(lado=>`
+            <div class="side" data-lado="${lado}">
+              <div class="side-label">${lado==="negativo"?"(−)":"(＋)"}</div>
+              <div class="side-count">0 fichas</div>
+              <div class="spheres"></div>
+            </div>`).join("")}
+        </div>
+        <div class="street-total">0 respuestas</div>`;
+      board.appendChild(articulo);
+    });
+  }
+
+  inicioVacio();
+})();
+</script>
+
+</body>
+</html>
