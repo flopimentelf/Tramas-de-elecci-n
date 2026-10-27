@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Resultados | Taller de Diseño de Servicios 2026</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js"></script>
 <style>
 :root{--azul:#0875ff;--verde:#00c878;--amarillo:#ffd000;--rojo:#ed382b;--negro:#171717;--linea:rgba(23,23,23,.3)}
 *{box-sizing:border-box}
@@ -24,8 +25,7 @@ button,input,select{font:inherit}
 .hero-footer{padding-top:13px;border-top:1px solid var(--linea);font-size:9px;text-transform:uppercase;letter-spacing:.04em}
 .hero-divider{position:absolute;z-index:3;top:0;bottom:0;left:50%;width:1px;background:rgba(23,23,23,.45)}
 #rain{position:absolute;inset:0 0 0 50%;overflow:hidden;pointer-events:none;z-index:1}
-#rain .rain-piece{position:absolute;display:block;background:var(--color);clip-path:polygon(50% 0%,98% 35%,80% 94%,20% 94%,2% 35%);opacity:.9;transform:translateY(var(--fall-distance)) rotate(0deg);animation:rainSettle var(--duration) cubic-bezier(.2,.7,.3,1) var(--delay) forwards;will-change:transform}
-@keyframes rainSettle{0%{transform:translateY(var(--fall-distance)) rotate(0deg)}72%{transform:translateY(5px) rotate(var(--rotation))}86%{transform:translateY(-2px) rotate(calc(var(--rotation)*.65))}100%{transform:translateY(0) rotate(var(--rotation))}}
+#rain canvas{display:block;width:100%;height:100%;mix-blend-mode:multiply}
 .results{padding:36px 30px 30px}
 .section-top{display:flex;justify-content:space-between;align-items:flex-end;gap:25px;padding-bottom:22px;border-bottom:1px solid var(--linea)}
 .section-label{color:var(--azul);font-size:10px;letter-spacing:.1em;text-transform:uppercase}
@@ -314,41 +314,106 @@ setConnection("Actualización en tiempo real no disponible");
 init();
 function startRain(){
 const container=document.getElementById("rain");
-if(!container||container.dataset.rainStarted==="true")return;
+if(!container||container.dataset.rainStarted==="true"||!window.Matter)return;
 container.dataset.rainStarted="true";
-const colors=["#0875ff","#00c878","#ffd000","#ed382b"];
-const width=container.clientWidth;
-const height=container.clientHeight;
-if(!width||!height)return;
-const baseSize=Math.max(25,Math.min(39,width/12));
-const columnWidth=baseSize*.78;
-const columns=Math.max(1,Math.ceil(width/columnWidth));
-const total=Math.max(160,Math.ceil(height/(baseSize*.48))*columns);
-for(let i=0;i<total;i++){
-const piece=document.createElement("span");
-const size=baseSize*(.78+Math.random()*.5);
-const col=i%columns;
-const row=Math.floor(i/columns);
-const left=Math.max(-size*.2,Math.min(width-size*.8,col*(width/columns)+(Math.random()-.5)*columnWidth));
-const top=height-size-row*baseSize*.43+(Math.random()-.5)*baseSize*.32;
-piece.className="rain-piece";
-piece.style.left=left+"px";
-piece.style.top=top+"px";
-piece.style.width=size+"px";
-piece.style.height=size+"px";
-piece.style.setProperty("--color",colors[Math.floor(Math.random()*colors.length)]);
-piece.style.setProperty("--fall-distance",-(height+size+top)+"px");
-piece.style.setProperty("--duration",(1.05+Math.random()*.85)+"s");
-piece.style.setProperty("--delay",(i*.065)+"s");
-piece.style.setProperty("--rotation",(Math.random()*90-45)+"deg");
-container.appendChild(piece);
+const {Engine,Render,Runner,Bodies,Body,Composite,Events}=Matter;
+const colors=["rgba(255,25,60,.57)","rgba(0,100,255,.55)","rgba(255,195,0,.62)","rgba(0,210,120,.55)"];
+let width=Math.max(1,container.clientWidth);
+let height=Math.max(1,container.clientHeight);
+let pieces=[];
+let walls=[];
+let lastSpawn=performance.now();
+let colorIndex=0;
+const size=40;
+const maxPieces=204;
+const engine=Engine.create({enableSleeping:true});
+engine.gravity.y=1;
+engine.gravity.scale=.001;
+engine.positionIterations=10;
+engine.velocityIterations=8;
+const render=Render.create({element:container,engine,options:{width,height,wireframes:false,background:"transparent",pixelRatio:Math.min(window.devicePixelRatio||1,2)}});
+const runner=Runner.create({delta:1000/60});
+const random=(min,max)=>Math.random()*(max-min)+min;
+function makeWalls(){
+walls.forEach(wall=>Composite.remove(engine.world,wall));
+const thickness=160;
+walls=[
+Bodies.rectangle(width/2,height+thickness/2,width+thickness*2,thickness,{isStatic:true,render:{visible:false}}),
+Bodies.rectangle(-thickness/2,height/2,thickness,height*3,{isStatic:true,render:{visible:false}}),
+Bodies.rectangle(width+thickness/2,height/2,thickness,height*3,{isStatic:true,render:{visible:false}})
+];
+Composite.add(engine.world,walls);
 }
+function makePiece(){
+if(pieces.length>=maxPieces)return;
+const radius=width<500?Math.max(25,Math.min(34,width*.075)):31;
+const x=random(radius,Math.max(radius+1,width-radius));
+const piece=Bodies.polygon(x,-80-random(0,height*.2),5,radius,{
+restitution:.005,friction:.92,frictionStatic:1,frictionAir:.018,density:.0018,slop:.01,sleepThreshold:35,angle:random(-.5,.5),render:{visible:false}
+});
+piece.pentagonColor=colors[colorIndex++%colors.length];
+Body.setVelocity(piece,{x:random(-.65,.65),y:random(0,.3)});
+Body.setAngularVelocity(piece,random(-.012,.012));
+pieces.push(piece);
+Composite.add(engine.world,piece);
 }
-if(document.readyState==="loading"){
-document.addEventListener("DOMContentLoaded",startRain,{once:true});
-}else{
-startRain();
+function drawPiece(ctx,piece){
+const radius=piece.circleRadius||31;
+ctx.save();
+ctx.translate(piece.position.x,piece.position.y);
+ctx.rotate(piece.angle);
+ctx.beginPath();
+for(let i=0;i<5;i++){
+const angle=-Math.PI/2+i*Math.PI*2/5;
+const x=Math.cos(angle)*radius;
+const y=Math.sin(angle)*radius;
+if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
 }
+ctx.closePath();
+ctx.fillStyle=piece.pentagonColor;
+ctx.fill();
+ctx.restore();
+}
+Events.on(render,"afterRender",()=>{
+const ctx=render.context;
+ctx.save();
+ctx.globalCompositeOperation="multiply";
+pieces.forEach(piece=>drawPiece(ctx,piece));
+ctx.restore();
+});
+Events.on(engine,"beforeUpdate",()=>{
+const now=performance.now();
+if(now-lastSpawn>135&&pieces.length<maxPieces){makePiece();lastSpawn=now;}
+pieces.forEach(piece=>{
+if(piece.isSleeping)return;
+if(piece.speed<.045&&Math.abs(piece.angularVelocity)<.01){Body.setVelocity(piece,{x:0,y:0});Body.setAngularVelocity(piece,0);}
+});
+});
+Events.on(engine,"afterUpdate",()=>{
+pieces=pieces.filter(piece=>{
+if(piece.position.y>height+size*4){Composite.remove(engine.world,piece);return false;}
+return true;
+});
+});
+function resizeRain(){
+width=Math.max(1,container.clientWidth);
+height=Math.max(1,container.clientHeight);
+render.canvas.width=width*render.options.pixelRatio;
+render.canvas.height=height*render.options.pixelRatio;
+render.canvas.style.width=width+"px";
+render.canvas.style.height=height+"px";
+render.options.width=width;
+render.options.height=height;
+makeWalls();
+}
+makeWalls();
+for(let i=0;i<24;i++)makePiece();
+window.addEventListener("resize",resizeRain);
+if("ResizeObserver" in window){new ResizeObserver(resizeRain).observe(container);}
+Runner.run(runner,engine);
+Render.run(render);
+}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",startRain,{once:true});else startRain();
 </script>
 </body>
 </html>
