@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -132,10 +133,10 @@ footer{display:flex;justify-content:space-between;gap:15px;padding:20px 0 0;font
 <div class="board" id="board"></div>
 <div class="board-bottom">
 <div class="board-legend">
-<div class="legend-tile"><div class="legend-shapes"><span class="token blue"></span></div><p><strong>Azul</strong><br>Seguridad percibida</p></div>
-<div class="legend-tile"><div class="legend-shapes"><span class="token yellow"></span></div><p><strong>Amarillo</strong><br>Luminosidad percibida</p></div>
-<div class="legend-tile"><div class="legend-shapes"><span class="token red"></span></div><p><strong>Rojo</strong><br>Facilidad para caminar</p></div>
-<div class="legend-tile"><div class="legend-shapes"><span class="token green"></span></div><p><strong>Verde</strong><br>Vitalidad urbana</p></div>
+<div class="legend-tile"><div class="legend-shapes"><span class="token blue"></span></div><p><strong>Azul</strong><br>Seguridad</p></div>
+<div class="legend-tile"><div class="legend-shapes"><span class="token yellow"></span></div><p><strong>Amarillo</strong><br>Luminosidad</p></div>
+<div class="legend-tile"><div class="legend-shapes"><span class="token green"></span></div><p><strong>Verde</strong><br>Transitabilidad</p></div>
+<div class="legend-tile"><div class="legend-shapes"><span class="token red"></span></div><p><strong>Rojo</strong><br>Actividad urbana</p></div>
 </div>
 <div class="board-question">
 <h3>¿Qué nos dicen las fichas?</h3>
@@ -153,15 +154,15 @@ footer{display:flex;justify-content:space-between;gap:15px;padding:20px 0 0;font
 </div>
 </div>
 <div class="variables">
-<div class="variable"><span class="swatch blue"></span><div><strong>Azul</strong><small>Seguridad percibida</small></div></div>
-<div class="variable"><span class="swatch yellow"></span><div><strong>Amarillo</strong><small>Luminosidad percibida</small></div></div>
-<div class="variable"><span class="swatch red"></span><div><strong>Rojo</strong><small>Facilidad para caminar</small></div></div>
-<div class="variable"><span class="swatch green"></span><div><strong>Verde</strong><small>Vitalidad urbana percibida</small></div></div>
+<div class="variable"><span class="swatch blue"></span><div><strong>Azul</strong><small>Seguridad</small></div></div>
+<div class="variable"><span class="swatch yellow"></span><div><strong>Amarillo</strong><small>Luminosidad</small></div></div>
+<div class="variable"><span class="swatch green"></span><div><strong>Verde</strong><small>Transitabilidad</small></div></div>
+<div class="variable"><span class="swatch red"></span><div><strong>Rojo</strong><small>Actividad urbana</small></div></div>
 </div>
 <div class="buenos-aires">
 <div>
 <h3>Valparaíso</h3>
-<p>Las percepciones recogidas permiten observar cómo se experimentan distintas calles a partir de sus condiciones de seguridad, luminosidad, facilidad para caminar y vitalidad urbana.</p>
+<p>Las percepciones recogidas permiten observar cómo se experimentan distintas calles a partir de sus condiciones de seguridad, luminosidad, transitabilidad y actividad urbana.</p>
 </div>
 <div>
 <h3>Buenos Aires</h3>
@@ -178,7 +179,7 @@ const SUPABASE_URL="https://mbkyszjxiqxhvqdqpxzd.supabase.co";
 const SUPABASE_KEY="sb_publishable_g4tlWVRipA6ByuDDBU0PQg_9PS6fvGh";
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const streets=["Serrano","Cochrane","Blanco","Errázuriz"];
-const variables={blue:"Seguridad percibida",yellow:"Luminosidad percibida",red:"Facilidad para caminar",green:"Vitalidad urbana percibida"};
+const variables={blue:"Seguridad",yellow:"Luminosidad",green:"Transitabilidad",red:"Actividad urbana"};
 let registros=[];
 let selectedDate="";
 let realtimeChannel=null;
@@ -317,7 +318,7 @@ const container=document.getElementById("rain");
 if(!container||container.dataset.rainStarted==="true"||!window.Matter)return;
 container.dataset.rainStarted="true";
 const {Engine,Render,Runner,Bodies,Body,Composite,Events}=Matter;
-const colors=["rgba(255,25,60,.57)","rgba(0,100,255,.55)","rgba(255,195,0,.62)","rgba(0,210,120,.55)"];
+const colors=["rgba(255,25,60,.62)","rgba(0,100,255,.60)","rgba(255,195,0,.66)","rgba(0,210,120,.60)"];
 let width=Math.max(1,container.clientWidth);
 let height=Math.max(1,container.clientHeight);
 let pieces=[];
@@ -346,7 +347,7 @@ Composite.add(engine.world,walls);
 }
 function makePiece(){
 if(pieces.length>=maxPieces)return;
-const radius=width<500?Math.max(25,Math.min(34,width*.075)):31;
+const radius=width<500?Math.max(29,Math.min(38,width*.082)):35;
 const x=random(radius,Math.max(radius+1,width-radius));
 const piece=Bodies.polygon(x,-80-random(0,height*.2),5,radius,{
 restitution:.005,friction:.92,frictionStatic:1,frictionAir:.018,density:.0018,slop:.01,sleepThreshold:35,angle:random(-.5,.5),render:{visible:false}
@@ -358,7 +359,7 @@ pieces.push(piece);
 Composite.add(engine.world,piece);
 }
 function drawPiece(ctx,piece){
-const radius=piece.circleRadius||31;
+const radius=piece.circleRadius||35;
 ctx.save();
 ctx.translate(piece.position.x,piece.position.y);
 ctx.rotate(piece.angle);
