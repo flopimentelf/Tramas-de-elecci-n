@@ -83,8 +83,135 @@ button,input,select{font:inherit}
 .buenos-aires h3{margin:0 0 10px;font-size:10px;text-transform:uppercase;letter-spacing:.08em}
 .buenos-aires p{max-width:550px;color:#555;font-size:12px;line-height:1.7}
 footer{display:flex;justify-content:space-between;gap:15px;padding:20px 0 0;font-size:9px;text-transform:uppercase;letter-spacing:.04em}
-@media(max-width:800px){.hero-copy{padding:20px 15px 17px 18px}.hero-header{flex-direction:column;font-size:9px}.hero-meta{text-align:left}.hero h1{font-size:clamp(37px,8vw,60px)}.hero-description{font-size:11px}.results{padding:28px 16px}.section-top{align-items:flex-start;flex-direction:column}.lane{min-height:270px}.spheres{min-height:190px}.token{flex-basis:33px;width:33px;height:33px;margin:0 -6px -5px}.board-bottom{grid-template-columns:1fr}}
-@media(max-width:600px){.hero{grid-template-columns:1fr;min-height:760px;min-height:90svh}.hero-divider{left:0;right:0;top:50%;bottom:auto;width:auto;height:1px}#rain{inset:50% 0 0;z-index:1}.hero-copy{padding:15px 18px 14px;min-width:0}.hero-header{font-size:9px;gap:8px;flex-direction:column}.hero-meta{text-align:left}.hero-content{padding:30px 0;justify-content:center;min-width:0}.hero h1{font-size:clamp(38px,10vw,54px);overflow-wrap:normal}.kicker{font-size:8px;padding:6px 7px;margin-bottom:18px}.hero-description{font-size:12px;line-height:1.55;margin-top:18px;max-width:100%;overflow-wrap:break-word}.hero-note{font-size:10px;margin-top:18px}.hero-footer{font-size:8px}.board-wrap{overflow-x:auto;padding:8px 5px 0}.board{min-width:680px}.board-bottom{min-width:680px;padding:12px 5px;gap:15px}.street-heading{padding:9px 2px}.street-name{font-size:12px}.lane{min-height:210px}.spheres{min-height:150px;padding:4px 0}.token{flex-basis:24px;width:24px;height:24px;margin:0 -4px -4px}.side-label,.side-count{font-size:8px}.board-legend{grid-template-columns:repeat(2,minmax(0,1fr))}.variables{grid-template-columns:repeat(2,minmax(0,1fr))}.buenos-aires{grid-template-columns:1fr}footer{flex-direction:column}}
+@media(max-width:800px){
+.hero-copy{padding:20px 15px 17px 18px}
+.hero-header{flex-direction:column;font-size:9px}
+.hero-meta{text-align:left}
+.hero h1{font-size:clamp(37px,8vw,60px)}
+.hero-description{font-size:11px}
+.results{padding:28px 16px}
+.section-top{align-items:flex-start;flex-direction:column}
+.lane{min-height:270px}
+.spheres{min-height:190px}
+.token{flex-basis:33px;width:33px;height:33px;margin:0 -6px -5px}
+.board-bottom{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+.hero{
+display:block;
+height:100svh;
+min-height:700px;
+max-height:950px;
+}
+.hero-copy{
+position:absolute;
+top:0;
+left:0;
+right:0;
+height:50%;
+padding:14px 18px 12px;
+overflow:hidden;
+}
+.hero-header{
+display:flex;
+flex-direction:column;
+gap:7px;
+padding-bottom:9px;
+font-size:9px;
+line-height:1.4;
+}
+.hero-meta{text-align:left}
+.hero-content{
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:flex-start;
+height:calc(100% - 65px);
+padding:7px 0;
+}
+.kicker{
+margin-bottom:13px;
+padding:6px 7px;
+font-size:8px;
+letter-spacing:.07em;
+}
+.hero h1{
+font-size:clamp(37px,9.5vw,54px);
+letter-spacing:-.085em;
+line-height:.88;
+}
+.hero-description{
+max-width:100%;
+margin-top:13px;
+font-size:11px;
+line-height:1.4;
+}
+.hero-note{
+margin-top:10px;
+font-size:9px;
+line-height:1.4;
+}
+.hero-footer{
+position:absolute;
+bottom:0;
+left:18px;
+right:18px;
+padding-top:7px;
+font-size:8px;
+line-height:1.3;
+}
+.hero-divider{
+position:absolute;
+top:50%;
+left:0;
+right:0;
+bottom:auto;
+width:100%;
+height:1px;
+z-index:4;
+}
+#rain{
+position:absolute;
+top:50%;
+left:0;
+right:0;
+bottom:0;
+width:100%;
+height:50%;
+z-index:1;
+overflow:hidden;
+}
+#rain canvas{
+display:block;
+width:100%;
+height:100%;
+}
+.results{padding:28px 16px}
+.section-top{align-items:flex-start;flex-direction:column}
+.section-top h2{font-size:36px}
+.board-wrap{overflow-x:auto;padding:8px 5px 0}
+.board{min-width:680px}
+.board-bottom{min-width:680px;padding:12px 5px;gap:15px}
+.street-heading{padding:9px 2px}
+.street-name{font-size:12px}
+.lane{min-height:210px}
+.spheres{min-height:150px;padding:4px 0}
+.token{flex-basis:24px;width:24px;height:24px;margin:0 -4px -4px}
+.side-label,.side-count{font-size:8px}
+.board-legend{grid-template-columns:repeat(2,minmax(0,1fr))}
+.variables{grid-template-columns:repeat(2,minmax(0,1fr))}
+.buenos-aires{grid-template-columns:1fr}
+footer{flex-direction:column}
+}
+@media(max-width:380px){
+.hero-copy{padding-left:14px;padding-right:14px}
+.hero-header{font-size:8px}
+.hero h1{font-size:37px}
+.kicker{font-size:7px;margin-bottom:10px}
+.hero-description{font-size:10px;margin-top:10px}
+.hero-note{font-size:8px;margin-top:8px}
+.hero-footer{left:14px;right:14px}
+}
 </style>
 </head>
 <body>
