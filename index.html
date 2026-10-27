@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -53,7 +52,7 @@ button,input,select{font:inherit}
 .side-label{padding:8px 2px;text-align:center;font-size:10px;font-weight:700;background:rgba(255,255,255,.55);border-bottom:1px solid rgba(0,0,0,.12)}
 .side-count{padding:5px 2px;text-align:center;font-size:9px;color:#666}
 .spheres{flex:1;min-height:250px;display:flex;flex-wrap:wrap-reverse;align-content:flex-start;align-items:flex-end;justify-content:center;gap:0;padding:5px 3px 8px;overflow:hidden}
-.token{flex:0 0 39px;width:39px;height:39px;margin:0 -3px -3px;clip-path:polygon(50% 0%,98% 35%,80% 94%,20% 94%,2% 35%);opacity:.82;mix-blend-mode:multiply;border:none;animation:caer .65s cubic-bezier(.2,.7,.3,1) both}
+.token{flex:0 0 43px;width:43px;height:43px;margin:0 -8px -7px;clip-path:polygon(50% 0%,98% 35%,80% 94%,20% 94%,2% 35%);opacity:.82;mix-blend-mode:multiply;border:none;animation:caer .65s cubic-bezier(.2,.7,.3,1) both}
 .token.blue{background:rgba(8,117,255,.84)}
 .token.green{background:rgba(0,145,82,.84)}
 .token.yellow{background:rgba(255,208,0,.88)}
@@ -84,8 +83,8 @@ button,input,select{font:inherit}
 .buenos-aires h3{margin:0 0 10px;font-size:10px;text-transform:uppercase;letter-spacing:.08em}
 .buenos-aires p{max-width:550px;color:#555;font-size:12px;line-height:1.7}
 footer{display:flex;justify-content:space-between;gap:15px;padding:20px 0 0;font-size:9px;text-transform:uppercase;letter-spacing:.04em}
-@media(max-width:800px){.hero-copy{padding:20px 15px 17px 18px}.hero-header{flex-direction:column;font-size:9px}.hero-meta{text-align:left}.hero h1{font-size:clamp(37px,8vw,60px)}.hero-description{font-size:11px}.results{padding:28px 16px}.section-top{align-items:flex-start;flex-direction:column}.lane{min-height:270px}.spheres{min-height:190px}.token{flex-basis:29px;width:29px;height:29px}.board-bottom{grid-template-columns:1fr}}
-@media(max-width:600px){.hero{grid-template-columns:1fr;min-height:760px;min-height:90svh}.hero-divider{left:0;right:0;top:50%;bottom:auto;width:auto;height:1px}#rain{inset:50% 0 0;z-index:1}.hero-copy{padding:15px 18px 14px;min-width:0}.hero-header{font-size:9px;gap:8px;flex-direction:column}.hero-meta{text-align:left}.hero-content{padding:30px 0;justify-content:center;min-width:0}.hero h1{font-size:clamp(38px,10vw,54px);overflow-wrap:normal}.kicker{font-size:8px;padding:6px 7px;margin-bottom:18px}.hero-description{font-size:12px;line-height:1.55;margin-top:18px;max-width:100%;overflow-wrap:break-word}.hero-note{font-size:10px;margin-top:18px}.hero-footer{font-size:8px}.board-wrap{overflow-x:auto;padding:8px 5px 0}.board{min-width:680px}.board-bottom{min-width:680px;padding:12px 5px;gap:15px}.street-heading{padding:9px 2px}.street-name{font-size:12px}.lane{min-height:210px}.spheres{min-height:150px;padding:4px 0}.token{flex-basis:21px;width:21px;height:21px;margin:0 -2px -2px}.side-label,.side-count{font-size:8px}.board-legend{grid-template-columns:repeat(2,minmax(0,1fr))}.variables{grid-template-columns:repeat(2,minmax(0,1fr))}.buenos-aires{grid-template-columns:1fr}footer{flex-direction:column}}
+@media(max-width:800px){.hero-copy{padding:20px 15px 17px 18px}.hero-header{flex-direction:column;font-size:9px}.hero-meta{text-align:left}.hero h1{font-size:clamp(37px,8vw,60px)}.hero-description{font-size:11px}.results{padding:28px 16px}.section-top{align-items:flex-start;flex-direction:column}.lane{min-height:270px}.spheres{min-height:190px}.token{flex-basis:33px;width:33px;height:33px;margin:0 -6px -5px}.board-bottom{grid-template-columns:1fr}}
+@media(max-width:600px){.hero{grid-template-columns:1fr;min-height:760px;min-height:90svh}.hero-divider{left:0;right:0;top:50%;bottom:auto;width:auto;height:1px}#rain{inset:50% 0 0;z-index:1}.hero-copy{padding:15px 18px 14px;min-width:0}.hero-header{font-size:9px;gap:8px;flex-direction:column}.hero-meta{text-align:left}.hero-content{padding:30px 0;justify-content:center;min-width:0}.hero h1{font-size:clamp(38px,10vw,54px);overflow-wrap:normal}.kicker{font-size:8px;padding:6px 7px;margin-bottom:18px}.hero-description{font-size:12px;line-height:1.55;margin-top:18px;max-width:100%;overflow-wrap:break-word}.hero-note{font-size:10px;margin-top:18px}.hero-footer{font-size:8px}.board-wrap{overflow-x:auto;padding:8px 5px 0}.board{min-width:680px}.board-bottom{min-width:680px;padding:12px 5px;gap:15px}.street-heading{padding:9px 2px}.street-name{font-size:12px}.lane{min-height:210px}.spheres{min-height:150px;padding:4px 0}.token{flex-basis:24px;width:24px;height:24px;margin:0 -4px -4px}.side-label,.side-count{font-size:8px}.board-legend{grid-template-columns:repeat(2,minmax(0,1fr))}.variables{grid-template-columns:repeat(2,minmax(0,1fr))}.buenos-aires{grid-template-columns:1fr}footer{flex-direction:column}}
 </style>
 </head>
 <body>
@@ -318,15 +317,15 @@ const container=document.getElementById("rain");
 if(!container||container.dataset.rainStarted==="true"||!window.Matter)return;
 container.dataset.rainStarted="true";
 const {Engine,Render,Runner,Bodies,Body,Composite,Events}=Matter;
-const colors=["rgba(255,25,60,.62)","rgba(0,100,255,.60)","rgba(255,195,0,.66)","rgba(0,210,120,.60)"];
+const colors=["rgba(255,25,60,.68)","rgba(0,100,255,.66)","rgba(255,195,0,.72)","rgba(0,210,120,.66)"];
 let width=Math.max(1,container.clientWidth);
 let height=Math.max(1,container.clientHeight);
 let pieces=[];
 let walls=[];
 let lastSpawn=performance.now();
 let colorIndex=0;
-const size=40;
-const maxPieces=204;
+const size=46;
+const maxPieces=300;
 const engine=Engine.create({enableSleeping:true});
 engine.gravity.y=1;
 engine.gravity.scale=.001;
@@ -347,11 +346,12 @@ Composite.add(engine.world,walls);
 }
 function makePiece(){
 if(pieces.length>=maxPieces)return;
-const radius=width<500?Math.max(29,Math.min(38,width*.082)):35;
+const radius=width<500?Math.max(32,Math.min(42,width*.09)):39;
 const x=random(radius,Math.max(radius+1,width-radius));
 const piece=Bodies.polygon(x,-80-random(0,height*.2),5,radius,{
 restitution:.005,friction:.92,frictionStatic:1,frictionAir:.018,density:.0018,slop:.01,sleepThreshold:35,angle:random(-.5,.5),render:{visible:false}
 });
+piece.displayRadius=radius*1.1;
 piece.pentagonColor=colors[colorIndex++%colors.length];
 Body.setVelocity(piece,{x:random(-.65,.65),y:random(0,.3)});
 Body.setAngularVelocity(piece,random(-.012,.012));
@@ -359,7 +359,7 @@ pieces.push(piece);
 Composite.add(engine.world,piece);
 }
 function drawPiece(ctx,piece){
-const radius=piece.circleRadius||35;
+const radius=piece.displayRadius||(piece.circleRadius||39)*1.1;
 ctx.save();
 ctx.translate(piece.position.x,piece.position.y);
 ctx.rotate(piece.angle);
@@ -384,7 +384,7 @@ ctx.restore();
 });
 Events.on(engine,"beforeUpdate",()=>{
 const now=performance.now();
-if(now-lastSpawn>135&&pieces.length<maxPieces){makePiece();lastSpawn=now;}
+if(now-lastSpawn>80&&pieces.length<maxPieces){makePiece();lastSpawn=now;}
 pieces.forEach(piece=>{
 if(piece.isSleeping)return;
 if(piece.speed<.045&&Math.abs(piece.angularVelocity)<.01){Body.setVelocity(piece,{x:0,y:0});Body.setAngularVelocity(piece,0);}
@@ -408,7 +408,7 @@ render.options.height=height;
 makeWalls();
 }
 makeWalls();
-for(let i=0;i<24;i++)makePiece();
+for(let i=0;i<36;i++)makePiece();
 window.addEventListener("resize",resizeRain);
 if("ResizeObserver" in window){new ResizeObserver(resizeRain).observe(container);}
 Runner.run(runner,engine);
