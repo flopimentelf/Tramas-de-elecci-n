@@ -1,502 +1,3212 @@
-
 <!DOCTYPE html>
 <html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Resultados | Taller de Diseño de Servicios 2026</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js"></script>
-<style>
-:root{--azul:#0875ff;--verde:#00c878;--amarillo:#ffd000;--rojo:#ed382b;--negro:#171717;--linea:rgba(23,23,23,.3)}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;background:#fff;color:var(--negro);font-family:Helvetica,Arial,sans-serif}
-button,input,select{font:inherit}
-.hero{position:relative;display:grid;grid-template-columns:1fr 1fr;min-height:100vh;overflow:hidden;background:white}
-.hero-copy{position:relative;z-index:2;display:flex;flex-direction:column;min-width:0;padding:25px 30px 22px 34px;pointer-events:none}
-.hero-header{display:flex;justify-content:space-between;gap:15px;padding-bottom:14px;border-bottom:1px solid var(--linea);font-size:11px;line-height:1.5}
-.hero-meta{text-align:right}
-.hero-content{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
-.kicker{margin-bottom:22px;padding:7px 10px;border:1px solid var(--azul);color:var(--azul);font-size:10px;letter-spacing:.09em;text-transform:uppercase}
-.hero h1{margin:0;font-size:clamp(43px,7vw,100px);letter-spacing:-.085em;line-height:.9}
-.hero h1 span{color:var(--azul)}
-.hero-description{max-width:350px;margin-top:28px;font-size:13px;line-height:1.65}
-.hero-note{margin-top:24px;color:#555;font-size:10px;line-height:1.7}
-.hero-footer{padding-top:13px;border-top:1px solid var(--linea);font-size:9px;text-transform:uppercase;letter-spacing:.04em}
-.hero-divider{position:absolute;z-index:3;top:0;bottom:0;left:50%;width:1px;background:rgba(23,23,23,.45)}
-#rain{position:absolute;inset:0 0 0 50%;overflow:hidden;pointer-events:none;z-index:1}
-#rain canvas{display:block;width:100%;height:100%;mix-blend-mode:multiply}
-.results{padding:36px 30px 30px}
-.section-top{display:flex;justify-content:space-between;align-items:flex-end;gap:25px;padding-bottom:22px;border-bottom:1px solid var(--linea)}
-.section-label{color:var(--azul);font-size:10px;letter-spacing:.1em;text-transform:uppercase}
-.section-top h2{margin:10px 0 0;font-size:clamp(32px,5vw,62px);line-height:.94;letter-spacing:-.065em}
-.section-top p{max-width:410px;color:#555;font-size:12px;line-height:1.7}
-.summary{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;padding:15px 0;border-bottom:1px solid var(--linea);font-size:11px}
-.summary strong{font-weight:700}
-.day-navigation{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:18px 0}
-.day-navigation label{font-size:10px;text-transform:uppercase;letter-spacing:.07em}
-.day-navigation select{min-width:180px;padding:10px;border:1px solid var(--linea);background:#fff;color:var(--negro);font-size:11px}
-.day-navigation p{flex:1;margin:0;font-size:10px;color:#666;line-height:1.5}
-.status{color:#555;font-size:10px;line-height:1.5}
-.board-wrap{position:relative;margin-top:12px;padding:12px 12px 0;border:1px solid #777;background:#ededed;box-shadow:inset 0 0 0 1px rgba(255,255,255,.8)}
-.board-wrap::before{content:"";position:absolute;top:-12px;left:0;right:0;height:12px;background:linear-gradient(135deg,#aaa 0 5%,#f5f5f5 5% 20%,#d0d0d0 20% 25%,#f5f5f5 25% 40%,#aaa 40% 45%,#f5f5f5 45% 60%,#d0d0d0 60% 65%,#f5f5f5 65% 80%,#aaa 80% 85%,#f5f5f5 85%);border:1px solid #aaa;border-bottom:0}
-.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid #aaa;border-bottom:0;background:#f4f4f4}
-.street{min-width:0;border-right:1px solid #222}
-.street:last-child{border-right:0}
-.street-heading{padding:12px 8px 9px;text-align:center;background:rgba(255,255,255,.6);border-bottom:1px solid #aaa}
-.street-number{display:block;margin-bottom:4px;color:#777;font-size:8px;letter-spacing:.1em}
-.street-name{font-size:clamp(13px,1.5vw,18px);font-weight:700}
-.lane{display:grid;grid-template-columns:1fr 1fr;min-height:345px}
-.side{position:relative;display:flex;flex-direction:column;min-width:0;background:#ededed}
-.side+.side{border-left:1px solid #aaa}
-.side-label{padding:8px 2px;text-align:center;font-size:10px;font-weight:700;background:rgba(255,255,255,.55);border-bottom:1px solid rgba(0,0,0,.12)}
-.side-count{padding:5px 2px;text-align:center;font-size:9px;color:#666}
-.spheres{flex:1;min-height:250px;display:flex;flex-wrap:wrap-reverse;align-content:flex-start;align-items:flex-end;justify-content:center;gap:0;padding:5px 3px 8px;overflow:hidden}
-.token{flex:0 0 43px;width:43px;height:43px;margin:0 -11px -10px;clip-path:polygon(50% 0%,98% 35%,80% 94%,20% 94%,2% 35%);opacity:.82;mix-blend-mode:multiply;border:none;animation:caer .65s cubic-bezier(.2,.7,.3,1) both}
-.token.blue{background:rgba(8,117,255,.84)}
-.token.green{background:rgba(0,145,82,.84)}
-.token.yellow{background:rgba(255,208,0,.88)}
-.token.red{background:rgba(196,48,26,.84)}
-@keyframes caer{from{transform:translateY(-90px) rotate(-12deg);opacity:0}70%{opacity:.9}to{transform:translateY(0) rotate(0);opacity:.82}}
-.side.empty .spheres::after{content:"Sin registros";align-self:center;margin:auto;color:#aaa;font-size:9px}
-.street-total{padding:7px;text-align:center;background:#f7f7f7;border-top:1px solid #aaa;font-size:9px;color:#555}
-.board-bottom{display:grid;grid-template-columns:1.15fr 1fr;gap:22px;padding:18px 12px 16px;background:#d9d9d9;border:1px solid #aaa;border-top:0}
-.board-legend{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-.legend-tile{min-width:0;text-align:center}
-.legend-shapes{display:flex;flex-wrap:wrap;justify-content:center;align-content:center;min-height:53px;padding:4px;background:#999;border:1px solid #777}
-.legend-shapes .token{flex:0 0 23px;width:23px;height:23px;margin:-1px;animation:none}
-.legend-tile p{margin:7px 0 0;font-size:9px;line-height:1.35}
-.board-question{align-self:center}
-.board-question h3{margin:0 0 10px;font-size:clamp(17px,2vw,26px);letter-spacing:-.04em}
-.board-question ol{margin:0;padding-left:17px;font-size:9px;line-height:1.7}
-.board-foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:10px 0 0;color:#555;font-size:9px}
-.variables{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin-top:24px}
-.variable{display:flex;gap:9px;align-items:flex-start}
-.swatch{width:19px;height:19px;flex:0 0 19px;clip-path:polygon(50% 0%,98% 35%,80% 94%,20% 94%,2% 35%)}
-.swatch.blue{background:var(--azul)}
-.swatch.yellow{background:var(--amarillo)}
-.swatch.red{background:var(--rojo)}
-.swatch.green{background:var(--verde)}
-.variable strong{display:block;font-size:10px;margin-bottom:4px}
-.variable small{color:#666;font-size:9px;line-height:1.45}
-.buenos-aires{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:35px;padding:20px 0;border-top:1px solid var(--linea);border-bottom:1px solid var(--linea)}
-.buenos-aires h3{margin:0 0 10px;font-size:10px;text-transform:uppercase;letter-spacing:.08em}
-.buenos-aires p{max-width:550px;color:#555;font-size:12px;line-height:1.7}
-footer{display:flex;justify-content:space-between;gap:15px;padding:20px 0 0;font-size:9px;text-transform:uppercase;letter-spacing:.04em}
-@media(max-width:800px){
-.hero-copy{padding:20px 15px 17px 18px}
-.hero-header{flex-direction:column;font-size:9px}
-.hero-meta{text-align:left}
-.hero h1{font-size:clamp(37px,8vw,60px)}
-.hero-description{font-size:11px}
-.results{padding:28px 16px}
-.section-top{align-items:flex-start;flex-direction:column}
-.lane{min-height:270px}
-.spheres{min-height:190px}
-.token{flex-basis:33px;width:33px;height:33px;margin:0 -6px -5px}
-.board-bottom{grid-template-columns:1fr}
-}
-@media(max-width:600px){
-.hero{display:grid;grid-template-columns:1fr 1fr;height:100svh;min-height:620px;max-height:950px}
-.hero-copy{position:relative;top:auto;left:auto;right:auto;height:100%;padding:12px 10px 12px 12px;overflow:hidden}
-.hero-header{display:flex;flex-direction:column;gap:7px;padding-bottom:9px;font-size:8px;line-height:1.4}
-.hero-meta{text-align:left}
-.hero-content{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;height:auto;flex:1;padding:7px 0}
-.kicker{margin-bottom:11px;padding:5px 6px;font-size:7px;letter-spacing:.04em}
-.hero h1{font-size:clamp(30px,8.2vw,48px);letter-spacing:-.085em;line-height:.9;overflow-wrap:anywhere}
-.hero-description{max-width:100%;margin-top:12px;font-size:10px;line-height:1.4}
-.hero-note{margin-top:10px;font-size:8px;line-height:1.4}
-.hero-footer{position:absolute;bottom:0;left:12px;right:8px;padding-top:7px;font-size:7px;line-height:1.3}
-.hero-divider{position:absolute;top:0;left:50%;right:auto;bottom:0;width:1px;height:100%;z-index:4}
-#rain{position:absolute;top:0;left:50%;right:0;bottom:0;width:50%;height:100%;z-index:1;overflow:hidden}
-#rain canvas{display:block;width:100%;height:100%;mix-blend-mode:multiply}
-.results{padding:28px 16px}
-.section-top{align-items:flex-start;flex-direction:column}
-.section-top h2{font-size:36px}
-.board-wrap{overflow-x:auto;padding:8px 5px 0}
-.board{min-width:680px}
-.board-bottom{min-width:680px;padding:12px 5px;gap:15px}
-.street-heading{padding:9px 2px}
-.street-name{font-size:12px}
-.lane{min-height:210px}
-.spheres{min-height:150px;padding:4px 0}
-.token{flex-basis:24px;width:24px;height:24px;margin:0 -6px -6px}
-.side-label,.side-count{font-size:8px}
-.board-legend{grid-template-columns:repeat(2,minmax(0,1fr))}
-.variables{grid-template-columns:repeat(2,minmax(0,1fr))}
-.buenos-aires{grid-template-columns:1fr}
-footer{flex-direction:column}
-}
-@media(max-width:380px){
-.hero-copy{padding-left:10px;padding-right:8px}
-.hero-header{font-size:7px}
-.hero h1{font-size:clamp(28px,7.8vw,37px)}
-.kicker{font-size:7px;margin-bottom:10px}
-.hero-description{font-size:9px;margin-top:9px}
-.hero-note{font-size:7px;margin-top:7px}
-.hero-footer{left:10px;right:6px}
-}
-</style>
-</head>
-<body>
-<section class="hero">
-<div id="rain"></div>
-<div class="hero-divider"></div>
-<div class="hero-copy">
-<header class="hero-header">
-<div>Pontificia Universidad Católica de Valparaíso<br>Escuela de Arquitectura y Diseño</div>
-<div class="hero-meta">Taller de Diseño de Servicios 2026<br>Investigación territorial</div>
-</header>
-<div class="hero-content">
-<div class="kicker">Visualización de resultados</div>
-<h1>Tramas<br>de <span>elección</span></h1>
-<p class="hero-description">Un registro colectivo de las percepciones que construyen la experiencia de caminar por la ciudad.</p>
-<p class="hero-note">VALPARAÍSO ↔ BUENOS AIRES<br>Calles, decisiones y experiencias urbanas.</p>
-</div>
-<div class="hero-footer">Observación · Percepción · Territorio</div>
-</div>
-</section>
-<main class="results">
-<div class="section-top">
-<div>
-<div class="section-label">01 / Datos colectivos</div>
-<h2>Una elección,<br>muchas percepciones.</h2>
-</div>
-<p>Las fichas muestran cómo se distribuyen las valoraciones sobre distintas calles y variables de la experiencia peatonal. La información se actualiza automáticamente a medida que se incorporan nuevos registros.</p>
-</div>
-<div class="summary">
-<span id="recordSummary"><strong>Conectando con Supabase…</strong></span>
-<span id="connectionStatus">Estableciendo conexión</span>
-</div>
-<div class="day-navigation">
-<label for="fecha">Fecha</label>
-<select id="fecha"><option value="">Cargando fechas…</option></select>
-<label for="lugar">Ciudad</label>
-<select id="lugar">
-<option value="valparaiso">Valparaíso</option>
-<option value="buenosaires">Buenos Aires</option>
-</select>
-<p>Vista pública de consulta. Los cambios en los registros se reflejan en tiempo real.</p>
-</div>
-<div id="status" class="status" role="status">Cargando registros…</div>
-<div class="board-wrap">
-<div class="board" id="board"></div>
-<div class="board-bottom">
-<div class="board-legend">
-<div class="legend-tile"><div class="legend-shapes"><span class="token blue"></span></div><p><strong>Azul</strong><br>Seguridad</p></div>
-<div class="legend-tile"><div class="legend-shapes"><span class="token yellow"></span></div><p><strong>Amarillo</strong><br>Luminosidad</p></div>
-<div class="legend-tile"><div class="legend-shapes"><span class="token green"></span></div><p><strong>Verde</strong><br>Transitabilidad</p></div>
-<div class="legend-tile"><div class="legend-shapes"><span class="token red"></span></div><p><strong>Rojo</strong><br>Actividad urbana</p></div>
-</div>
-<div class="board-question">
-<h3>¿Qué nos dicen las fichas?</h3>
-<ol>
-<li>Cada pentágono representa una ficha registrada.</li>
-<li>El color identifica la variable de percepción.</li>
-<li>La columna indica la calle elegida.</li>
-<li>El lado muestra una valoración positiva o negativa.</li>
-</ol>
-</div>
-</div>
-<div class="board-foot">
-<span>Tramas de elección · 2026</span>
-<span>Datos compartidos en tiempo real</span>
-</div>
-</div>
-<div class="variables">
-<div class="variable"><span class="swatch blue"></span><div><strong>Azul</strong><small>Seguridad</small></div></div>
-<div class="variable"><span class="swatch yellow"></span><div><strong>Amarillo</strong><small>Luminosidad</small></div></div>
-<div class="variable"><span class="swatch green"></span><div><strong>Verde</strong><small>Transitabilidad</small></div></div>
-<div class="variable"><span class="swatch red"></span><div><strong>Rojo</strong><small>Actividad urbana</small></div></div>
-</div>
-<div class="buenos-aires">
-<div>
-<h3>Valparaíso</h3>
-<p>Las percepciones recogidas permiten observar cómo se experimentan distintas calles a partir de sus condiciones de seguridad, luminosidad, transitabilidad y actividad urbana.</p>
-</div>
-<div>
-<h3>Buenos Aires</h3>
-<p>La misma estructura de registro permite reunir y consultar las observaciones de ambas ciudades, manteniendo la relación entre calle, valoración y variable percibida.</p>
-</div>
-</div>
-<footer>
-<span>Tramas de elección · 2026</span>
-<span>Taller de Diseño de Servicios · PUCV</span>
-</footer>
-</main>
-<script>
-const SUPABASE_URL="https://mbkyszjxiqxhvqdqpxzd.supabase.co";
-const SUPABASE_KEY="sb_publishable_g4tlWVRipA6ByuDDBU0PQg_9PS6fvGh";
-const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-const streets=["Serrano","Cochrane","Blanco","Errázuriz"];
-const variables={blue:"Seguridad",yellow:"Luminosidad",green:"Transitabilidad",red:"Actividad urbana"};
-let registros=[];
-let selectedDate="";
-let realtimeChannel=null;
-let refreshTimer=null;
-const $=id=>document.getElementById(id);
-const today=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("-")};
-function setStatus(message){$("status").textContent=message}
-function setConnection(message){$("connectionStatus").textContent=message}
-function formatDate(value){
-if(!value)return "Sin fecha";
-const [year,month,day]=value.split("-");
-return day+"/"+month+"/"+year;
-}
-function updateDateOptions(){
-const select=$("fecha");
-const dates=[...new Set(registros.map(r=>r.fecha).filter(Boolean))].sort((a,b)=>b.localeCompare(a));
-if(!dates.length){
-select.innerHTML='<option value="">Sin fechas registradas</option>';
-selectedDate="";
-return;
-}
-if(!selectedDate||!dates.includes(selectedDate))selectedDate=dates.includes(today())?today():dates[0];
-select.innerHTML="";
-dates.forEach(date=>{
-const option=document.createElement("option");
-option.value=date;
-option.textContent=formatDate(date);
-select.appendChild(option);
-});
-select.value=selectedDate;
-}
-function renderBoard(){
-const board=$("board");
-board.innerHTML="";
-const place=$("lugar").value;
-const date=selectedDate;
-const filtered=registros.filter(r=>r.lugar===place&&r.fecha===date);
-streets.forEach((street,index)=>{
-const column=document.createElement("section");
-column.className="street";
-const heading=document.createElement("div");
-heading.className="street-heading";
-const number=document.createElement("span");
-number.className="street-number";
-number.textContent="CALLE 0"+(index+1);
-const name=document.createElement("div");
-name.className="street-name";
-name.textContent=street;
-heading.append(number,name);
-column.appendChild(heading);
-const lane=document.createElement("div");
-lane.className="lane";
-["positivo","negativo"].forEach(value=>{
-const side=document.createElement("div");
-side.className="side";
-const label=document.createElement("div");
-label.className="side-label";
-label.textContent=value==="positivo"?"Positiva":"Negativa";
-const items=filtered.filter(r=>r.calle===street&&r.valoracion===value);
-const total=items.reduce((sum,r)=>sum+Number(r.cantidad||0),0);
-const count=document.createElement("div");
-count.className="side-count";
-count.textContent=total+" ficha"+(total===1?"":"s");
-const spheres=document.createElement("div");
-spheres.className="spheres";
-if(total===0)side.classList.add("empty");
-items.forEach(r=>{
-const quantity=Math.min(Number(r.cantidad)||0,200);
-for(let i=0;i<quantity;i++){
-const token=document.createElement("span");
-token.className="token "+r.variable;
-token.style.animationDelay=Math.min(i*8,400)+"ms";
-token.title=(variables[r.variable]||r.variable)+" · "+(value==="positivo"?"Positiva":"Negativa")+" · "+street;
-spheres.appendChild(token);
-}
-});
-side.append(label,count,spheres);
-lane.appendChild(side);
-});
-column.appendChild(lane);
-const streetTotal=document.createElement("div");
-streetTotal.className="street-total";
-const total=filtered.filter(r=>r.calle===street).reduce((sum,r)=>sum+Number(r.cantidad||0),0);
-streetTotal.textContent="Total: "+total+" fichas";
-column.appendChild(streetTotal);
-board.appendChild(column);
-});
-const total=filtered.reduce((sum,r)=>sum+Number(r.cantidad||0),0);
-$("recordSummary").textContent=filtered.length+" registros · "+total+" fichas · "+formatDate(date)+" · "+$("lugar").selectedOptions[0].textContent;
-if(!filtered.length)setStatus("No hay registros para esta fecha y ciudad. Selecciona otra fecha o ciudad si hay datos disponibles.");
-else setStatus("Mostrando "+total+" fichas de "+filtered.length+" registros.");
-}
-async function loadRecords(showLoading=true){
-if(showLoading)setConnection("Actualizando datos…");
-const {data,error}=await supabaseClient.from("registros").select("id,fecha,lugar,calle,valoracion,variable,cantidad,created_at").order("created_at",{ascending:true});
-if(error){
-setConnection("Error al conectar");
-setStatus("No se pudieron cargar los datos. Comprueba las políticas de lectura de la tabla registros.");
-return;
-}
-registros=data||[];
-updateDateOptions();
-renderBoard();
-setConnection("Conectado · sincronización en tiempo real");
-}
-function scheduleRefresh(){
-if(refreshTimer)clearTimeout(refreshTimer);
-refreshTimer=setTimeout(()=>loadRecords(false),250);
-}
-$("fecha").addEventListener("change",()=>{
-selectedDate=$("fecha").value;
-renderBoard();
-});
-$("lugar").addEventListener("change",renderBoard);
-async function init(){
-await loadRecords();
-realtimeChannel=supabaseClient.channel("visualizacion-publica-registros")
-.on("postgres_changes",{event:"*",schema:"public",table:"registros"},()=>scheduleRefresh())
-.subscribe(status=>{
-if(status==="SUBSCRIBED")setConnection("Conectado · sincronización en tiempo real");
-else if(status==="CHANNEL_ERROR"||status==="TIMED_OUT")setConnection("Actualización en tiempo real no disponible");
-});
-}
-init();
-function startRain(){
-const container=document.getElementById("rain");
-if(!container||container.dataset.rainStarted==="true"||!window.Matter)return;
-container.dataset.rainStarted="true";
-const {Engine,Render,Runner,Bodies,Body,Composite,Events}=Matter;
-const colors=["rgba(255,25,60,.68)","rgba(0,100,255,.66)","rgba(255,195,0,.72)","rgba(0,210,120,.66)"];
-let width=Math.max(1,container.clientWidth);
-let height=Math.max(1,container.clientHeight);
-let pieces=[];
-let walls=[];
-let lastSpawn=performance.now();
-let colorIndex=0;
-const maxPieces=300;
-let spawnInterval=620;
-const startedAt=performance.now();
-const engine=Engine.create({enableSleeping:true});
-engine.gravity.y=.9;
-engine.gravity.scale=.00105;
-engine.positionIterations=12;
-engine.velocityIterations=10;
-engine.constraintIterations=4;
-const render=Render.create({element:container,engine,options:{width,height,wireframes:false,background:"transparent",pixelRatio:Math.min(window.devicePixelRatio||1,2)}});
-const runner=Runner.create({delta:1000/60,isFixed:true});
-const random=(min,max)=>Math.random()*(max-min)+min;
-function makeWalls(){
-walls.forEach(wall=>Composite.remove(engine.world,wall));
-const thickness=160;
-walls=[
-Bodies.rectangle(width/2,height+thickness/2,width+thickness*2,thickness,{isStatic:true,render:{visible:false}}),
-Bodies.rectangle(-thickness/2,height/2,thickness,height*3,{isStatic:true,render:{visible:false}}),
-Bodies.rectangle(width+thickness/2,height/2,thickness,height*3,{isStatic:true,render:{visible:false}})
-];
-Composite.add(engine.world,walls);
-}
-function makePiece(){
-if(pieces.length>=maxPieces)return;
-const radius=width<500?Math.max(22,Math.min(34,width*.075)):40;
-const x=random(radius*.7,Math.max(radius*.7,width-radius*.7));
-const piece=Bodies.polygon(x,-80-random(0,height*.18),5,radius,{
-restitution:0,
-friction:1,
-frictionStatic:1,
-frictionAir:.025,
-density:.002,
-slop:.04,
-sleepThreshold:18,
-angle:random(-.5,.5),
-render:{visible:false}
-});
-piece.displayRadius=radius*1.18;
-piece.pentagonColor=colors[colorIndex++%colors.length];
-piece.plugin={settled:false,settleFrames:0};
-Body.setVelocity(piece,{x:random(-.12,.12),y:0});
-Body.setAngularVelocity(piece,random(-.004,.004));
-pieces.push(piece);
-Composite.add(engine.world,piece);
-}
-function drawPiece(ctx,piece){
-const radius=piece.displayRadius||(piece.circleRadius||40)*1.12;
-ctx.save();
-ctx.translate(piece.position.x,piece.position.y);
-ctx.rotate(piece.angle);
-ctx.beginPath();
-for(let i=0;i<5;i++){
-const angle=-Math.PI/2+i*Math.PI*2/5;
-const x=Math.cos(angle)*radius;
-const y=Math.sin(angle)*radius;
-if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
-}
-ctx.closePath();
-ctx.fillStyle=piece.pentagonColor;
-ctx.fill();
-ctx.restore();
-}
-Events.on(render,"afterRender",()=>{
-const ctx=render.context;
-ctx.save();
-ctx.globalCompositeOperation="multiply";
-pieces.forEach(piece=>drawPiece(ctx,piece));
-ctx.restore();
-});
-Events.on(engine,"beforeUpdate",()=>{
-const now=performance.now();
-const elapsed=(now-startedAt)/1000;
-spawnInterval=Math.max(95,620-elapsed*65);
-if(now-lastSpawn>spawnInterval&&pieces.length<maxPieces){
-makePiece();
-lastSpawn=now;
-}
-pieces.forEach(piece=>{
-if(piece.plugin?.settled)return;
-const speed=Math.hypot(piece.velocity.x,piece.velocity.y);
-if(speed<.18&&Math.abs(piece.angularVelocity)<.025&&piece.position.y>0){
-piece.plugin.settleFrames++;
-if(piece.plugin.settleFrames>28){
-Body.setVelocity(piece,{x:0,y:0});
-Body.setAngularVelocity(piece,0);
-Body.setStatic(piece,true);
-piece.plugin.settled=true;
-}
-}else{
-piece.plugin.settleFrames=0;
-}
-});
-});
-Events.on(engine,"afterUpdate",()=>{
-pieces=pieces.filter(piece=>{
-if(piece.position.y>height+160){
-Composite.remove(engine.world,piece);
-return false;
-}
-return true;
-});
-});
-function resizeRain(){
-const oldWidth=width;
-width=Math.max(1,container.clientWidth);
-height=Math.max(1,container.clientHeight);
-render.canvas.width=width*render.options.pixelRatio;
-render.canvas.height=height*render.options.pixelRatio;
-render.canvas.style.width=width+"px";
-render.canvas.style.height=height+"px";
-render.options.width=width;
-render.options.height=height;
-makeWalls();
-if(Math.abs(width-oldWidth)>30){
-pieces.forEach(piece=>{
-if(piece.position.x>width-piece.displayRadius){
-Body.setPosition(piece,{x:Math.max(piece.displayRadius,width-piece.displayRadius),y:piece.position.y});
-}
-});
-}
-}
-makeWalls();
-makePiece();
-window.addEventListener("resize",resizeRain);
-if("ResizeObserver" in window)new ResizeObserver(resizeRain).observe(container);
-Runner.run(runner,engine);
-Render.run(render);
-}
-if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",startRain,{once:true});
-else startRain();
-</script>
-</body>
+    <head>
+
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Resultados | Taller de Diseño de Servicios 2026</title>
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js"></script>
+
+        <style>
+            :root {
+                --azul: #0875ff;
+                --verde: #00c878;
+                --amarillo: #ffd000;
+                --rojo: #ed382b;
+                --negro: #171717;
+                --linea: rgba(23,23,23,.3)
+            }
+
+            * {box-sizing: border-box}
+
+            html {scroll-behavior: smooth}
+
+            body {
+                margin: 0;
+                background: #fff;
+                color: var(--negro);
+                font-family: Helvetica,Arial,sans-serif
+            }
+
+            button,input,select {font: inherit}
+
+            .hero {
+                position: relative;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                min-height: 100vh;
+                overflow: hidden;
+                background: white
+            }
+
+            .hero-copy {
+                position: relative;
+                z-index: 2;
+                display: flex;
+                flex-direction: column;
+                min-width: 0;
+                padding: 25px 30px 22px 34px;
+                pointer-events: none
+            }
+
+            .hero-header {
+                display: flex;
+                justify-content: space-between;
+                gap: 15px;
+                padding-bottom: 14px;
+                border-bottom: 1px solid var(--linea);
+                font-size: 11px;
+                line-height: 1.5
+            }
+
+            .hero-meta {text-align: right}
+
+            .hero-content {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: flex-start
+            }
+
+            .kicker {
+                margin-bottom: 22px;
+                padding: 7px 10px;
+                border: 1px solid var(--azul);
+                color: var(--azul);
+                font-size: 10px;
+                letter-spacing: .09em;
+                text-transform: uppercase
+            }
+
+            .hero h1 {
+                margin: 0;
+                font-size: clamp(43px,7vw,100px);
+                letter-spacing: -.085em;
+                line-height: .9
+            }
+
+            .hero h1 span {color: var(--azul)}
+
+            .hero-description {
+                max-width: 350px;
+                margin-top: 28px;
+                font-size: 13px;
+                line-height: 1.65
+            }
+
+            .hero-note {
+                margin-top: 24px;
+                color: #555;
+                font-size: 10px;
+                line-height: 1.7
+            }
+
+            .hero-footer {
+                padding-top: 13px;
+                border-top: 1px solid var(--linea);
+                font-size: 9px;
+                text-transform: uppercase;
+                letter-spacing: .04em
+            }
+
+            .hero-divider {
+                position: absolute;
+                z-index: 3;
+                top: 0;
+                bottom: 0;
+                left: 50%;
+                width: 1px;
+                background: rgba(23,23,23,.45)
+            }
+
+            #rain {
+                position: absolute;
+                inset: 0 0 0 50%;
+                overflow: hidden;
+                pointer-events: none;
+                z-index: 1
+            }
+
+            #rain canvas {
+                display: block;
+                width: 100%;
+                height: 100%;
+                mix-blend-mode: multiply
+            }
+
+            .results {padding: 36px 30px 30px}
+
+            .section-top {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-end;
+                gap: 25px;
+                padding-bottom: 22px;
+                border-bottom: 1px solid var(--linea)
+            }
+
+            .section-label {
+                color: var(--azul);
+                font-size: 10px;
+                letter-spacing: .1em;
+                text-transform: uppercase
+            }
+
+            .section-top h2 {
+                margin: 10px 0 0;
+                font-size: clamp(32px,5vw,62px);
+                line-height: .94;
+                letter-spacing: -.065em
+            }
+
+            .section-top p {
+                max-width: 410px;
+                color: #555;
+                font-size: 12px;
+                line-height: 1.7
+            }
+
+            .summary {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                gap: 12px;
+                padding: 15px 0;
+                border-bottom: 1px solid var(--linea);
+                font-size: 11px
+            }
+
+            .summary strong {font-weight: 700}
+
+            .day-navigation {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 12px;
+                padding: 18px 0
+            }
+
+            .day-navigation label {
+                font-size: 10px;
+                text-transform: uppercase;
+                letter-spacing: .07em
+            }
+
+            .day-navigation select {
+                min-width: 180px;
+                padding: 10px;
+                border: 1px solid var(--linea);
+                background: #fff;
+                color: var(--negro);
+                font-size: 11px
+            }
+
+            .day-navigation p {
+                flex: 1;
+                margin: 0;
+                font-size: 10px;
+                color: #666;
+                line-height: 1.5
+            }
+
+            .status {
+                color: #555;
+                font-size: 10px;
+                line-height: 1.5
+            }
+
+            .board-wrap {
+                position: relative;
+                margin-top: 12px;
+                padding: 12px 12px 0;
+                border: 1px solid #777;
+                background: #ededed;
+                box-shadow: inset 0 0 0 1px rgba(255,255,255,.8)
+            }
+
+            .board {
+                display: grid;
+                grid-template-columns: repeat(4,minmax(0,1fr));
+                border: 1px solid #aaa;
+                border-bottom: 0;
+                background: #f4f4f4
+            }
+
+            .street {
+                min-width: 0;
+                border-right: 1px solid #222
+            }
+
+            .street:last-child {border-right: 0}
+
+            .street-heading {
+                padding: 12px 8px 9px;
+                text-align: center;
+                background: rgba(255,255,255,.6);
+                border-bottom: 1px solid #aaa
+            }
+
+            .street-number {
+                display: block;
+                margin-bottom: 4px;
+                color: #777;
+                font-size: 8px;
+                letter-spacing: .1em
+            }
+
+            .street-name {
+                font-size: clamp(13px,1.5vw,18px);
+                font-weight: 700
+            }
+
+            .lane {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                min-height: 425px
+            }
+
+            .side {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                min-width: 0;
+                background: #ededed
+            }
+
+            .side+.side {border-left: 1px solid #aaa}
+
+            .side-label {
+                padding: 8px 2px;
+                text-align: center;
+                font-size: 10px;
+                font-weight: 700;
+                background: rgba(255,255,255,.55);
+                border-bottom: 1px solid rgba(0,0,0,.12)
+            }
+
+            .side-count {
+                padding: 5px 2px;
+                text-align: center;
+                font-size: 9px;
+                color: #666
+            }
+
+            .spheres {
+                position: relative;
+                flex: 1;
+                min-height: 350px;
+                padding: 0;
+                overflow: hidden
+            }
+
+            .token {
+                width: 50px;
+                height: 50px;
+
+                clip-path: polygon(
+                    50% 0%,
+                    98% 35%,
+                    80% 94%,
+                    20% 94%,
+                    2% 35%
+                );
+
+                opacity: .82;
+                mix-blend-mode: multiply;
+                border: none;
+            }
+
+            .spheres > .token {
+                position: absolute;
+                left: var(--x, 50%);
+                top: var(--y, 50%);
+                margin: 0;
+
+                --giro: 0rad;
+                --entrada-x: 0px;
+                --rebote-x: 0px;
+
+                transform-origin: 50% 50%;
+                z-index: var(--orden, 1);
+                will-change: transform, opacity;
+
+                animation:
+                    caer .95s
+                    cubic-bezier(.20,.72,.25,1)
+                    both;
+            }
+
+            .spheres > .token.token-pending {
+                visibility: hidden;
+                animation: none;
+            }
+
+            .token.blue {background: rgba(8,117,255,.84)}
+            .token.green {background: rgba(0,145,82,.84)}
+            .token.yellow {background: rgba(255,208,0,.88)}
+            .token.red {background: rgba(196,48,26,.84)}
+
+            @keyframes caer {
+
+                0% {
+                    transform:
+                        translate(
+                            calc(-50% + var(--entrada-x)),
+                            calc(-50% - 165px)
+                        )
+                        rotate(
+                            calc(var(--giro) - .35rad)
+                        );
+
+                    opacity: 0;
+                }
+
+                22% {opacity: .5;}
+
+                70% {
+                    transform:
+                        translate(
+                            calc(-50% + var(--rebote-x)),
+                            calc(-50% + 8px)
+                        )
+                        rotate(
+                            calc(var(--giro) + .07rad)
+                        );
+
+                    opacity: .88;
+                }
+
+                84% {
+                    transform:
+                        translate(
+                            -50%,
+                            calc(-50% - 4px)
+                        )
+                        rotate(
+                            calc(var(--giro) - .035rad)
+                        );
+
+                    opacity: .84;
+                }
+
+                100% {
+                    transform:
+                        translate(-50%, -50%)
+                        rotate(var(--giro));
+
+                    opacity: .82;
+                }
+            }
+
+            .side.empty .spheres::after {
+                content: "Sin registros";
+                position: absolute;
+                inset: 0;
+                display: grid;
+                place-items: center;
+                color: #aaa;
+                font-size: 9px
+            }
+
+            .street-total {
+                padding: 7px;
+                text-align: center;
+                background: #f7f7f7;
+                border-top: 1px solid #aaa;
+                font-size: 9px;
+                color: #555
+            }
+
+            .board-bottom {
+                display: grid;
+                grid-template-columns: 1.7fr .8fr;
+                gap: 30px;
+                padding: 20px 16px 18px;
+                background: #d9d9d9;
+                border: 1px solid #aaa;
+                border-top: 0;
+                align-items: center;
+            }
+
+            .board-legend {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 10px;
+                align-items: start;
+            }
+
+            .legend-tile {
+                min-width: 0;
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .legend-shapes {
+                position: relative;
+                width: 100%;
+                min-height: 88px;
+                background: #999;
+                border: 1px solid #777;
+                overflow: visible;
+            }
+
+            .legend-shapes .token {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                width: 64px;
+                height: 64px;
+                margin: 0;
+                transform: translate(-50%, -50%);
+                animation: none;
+                z-index: 3;
+                opacity: 1;
+                mix-blend-mode: normal;
+            }
+
+            .legend-shapes .token.blue {background: var(--azul);}
+            .legend-shapes .token.green {background: var(--verde);}
+            .legend-shapes .token.yellow {background: var(--amarillo);}
+            .legend-shapes .token.red {background: var(--rojo);}
+
+            .legend-shapes .token img {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                width: 50%;
+                height: 50%;
+                transform: translate(-50%, -50%);
+                object-fit: contain;
+                pointer-events: none;
+                user-select: none;
+            }
+
+            .legend-shapes .token.blue img {
+                top: 52%;
+                width: 53%;
+                height: 53%;
+            }
+
+            .legend-shapes .token.red img {
+                top: 53%;
+                width: 49%;
+                height: 49%;
+            }
+
+            .legend-tile p {
+                margin: 12px 0 0;
+                font-size: 15px;
+                line-height: 1.35;
+            }
+
+            .legend-tile p strong {
+                display: block;
+                margin-top: 3px;
+                margin-bottom: 0;
+                font-size: 18px;
+            }
+
+            .board-question {
+                align-self: center;
+                padding-left: 6px;
+            }
+
+            .board-question h3 {
+                margin: 0 0 12px;
+                font-size: clamp(28px, 2.3vw, 42px);
+                letter-spacing: -.04em;
+            }
+
+            .board-question ol {
+                margin: 0;
+                padding-left: 20px;
+                font-size: 15px;
+                line-height: 1.75;
+            }
+
+            .board-foot {
+                display: flex;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 10px;
+                padding: 10px 0 0;
+                color: #555;
+                font-size: 9px
+            }
+
+
+            /* =========================================================
+            FICHA DIARIA DE DATOS
+            ========================================================= */
+
+            .daily-summary {
+                margin-top: 30px;
+                padding: 24px 0 28px;
+                border-top: 1px solid var(--linea);
+                border-bottom: 1px solid var(--linea);
+            }
+
+            .daily-summary-head {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-end;
+                gap: 20px;
+                margin-bottom: 18px;
+            }
+
+            .daily-summary-label {
+                color: var(--azul);
+                font-size: 11px;
+                letter-spacing: .1em;
+                text-transform: uppercase;
+            }
+
+            .daily-summary h3 {
+                margin: 6px 0 0;
+                font-size: clamp(28px, 2.6vw, 40px);
+                letter-spacing: -.045em;
+            }
+
+            .daily-summary-meta {
+                color: #666;
+                font-size: 13px;
+                text-align: right;
+            }
+
+            .daily-highlights {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 10px;
+                margin-bottom: 16px;
+            }
+
+            .daily-highlight {
+                min-width: 0;
+                padding: 14px 15px;
+                background: #f2f2f2;
+                border: 1px solid #bbb;
+            }
+
+            .daily-highlight span {
+                display: block;
+                margin-bottom: 6px;
+                color: #666;
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: .05em;
+            }
+
+            .daily-highlight strong {
+                display: block;
+                font-size: 18px;
+                line-height: 1.15;
+            }
+
+            .daily-highlight small {
+                display: block;
+                margin-top: 5px;
+                color: #555;
+                font-size: 12px;
+            }
+
+            .daily-summary-toolbar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 14px;
+                margin-bottom: 10px;
+            }
+
+            .daily-tabs {
+                display: flex;
+                gap: 6px;
+                flex-wrap: wrap;
+            }
+
+            .daily-tab {
+                padding: 8px 12px;
+                border: 1px solid #888;
+                background: #fff;
+                color: #222;
+                cursor: pointer;
+                font-size: 12px;
+            }
+
+            .daily-tab:hover {background: #eee;}
+
+            .daily-tab.active {
+                background: #171717;
+                border-color: #171717;
+                color: #fff;
+            }
+
+            .daily-summary-note {
+                margin: 0;
+                color: #666;
+                font-size: 12px;
+            }
+
+            .daily-table-wrap {
+                width: 100%;
+                overflow-x: auto;
+                border: 1px solid #aaa;
+            }
+
+            .daily-table {
+                width: 100%;
+                min-width: 760px;
+                border-collapse: collapse;
+                background: #fff;
+            }
+
+            .daily-table th,
+            .daily-table td {
+                padding: 11px 12px;
+                border-right: 1px solid #ccc;
+                border-bottom: 1px solid #ccc;
+                text-align: left;
+                font-size: 13px;
+                white-space: nowrap;
+            }
+
+            .daily-table th:last-child,
+            .daily-table td:last-child {border-right: 0;}
+
+            .daily-table tbody tr:last-child td {border-bottom: 0;}
+
+            .daily-table th {
+                background: #e5e5e5;
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: .04em;
+            }
+
+            .daily-table tbody tr:hover {background: #f5f5f5;}
+
+            .daily-table .number {
+                width: 1%;
+                text-align: center;
+                font-variant-numeric: tabular-nums;
+            }
+
+            .balance-positive {font-weight: 700; color: #08784c;}
+            .balance-negative {font-weight: 700; color: #b83224;}
+            .balance-neutral {font-weight: 700; color: #555;}
+
+            .variable-pill {
+                display: inline-flex;
+                align-items: center;
+                gap: 7px;
+            }
+
+            .variable-dot {
+                width: 12px;
+                height: 12px;
+                flex: 0 0 12px;
+                clip-path: polygon(50% 0%,98% 35%,80% 94%,20% 94%,2% 35%);
+            }
+
+            .variable-dot.blue {background: var(--azul);}
+            .variable-dot.green {background: var(--verde);}
+            .variable-dot.yellow {background: var(--amarillo);}
+            .variable-dot.red {background: var(--rojo);}
+
+            .daily-empty {
+                padding: 22px;
+                border: 1px solid #aaa;
+                background: #f5f5f5;
+                color: #666;
+                font-size: 13px;
+            }
+
+            .buenos-aires {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 24px;
+                margin-top: 35px;
+                padding: 20px 0;
+                border-top: 1px solid var(--linea);
+                border-bottom: 1px solid var(--linea)
+            }
+
+            .buenos-aires h3 {
+                margin: 0 0 10px;
+                font-size: 10px;
+                text-transform: uppercase;
+                letter-spacing: .08em
+            }
+
+            .buenos-aires p {
+                max-width: 550px;
+                color: #555;
+                font-size: 12px;
+                line-height: 1.7
+            }
+
+            footer {
+                display: flex;
+                justify-content: space-between;
+                gap: 15px;
+                padding: 20px 0 0;
+                font-size: 9px;
+                text-transform: uppercase;
+                letter-spacing: .04em
+            }
+
+            /* =========================================================
+            TABLET
+            ========================================================= */
+
+            @media (max-width: 900px) {
+
+                .hero-copy {padding: 22px 20px 20px 24px;}
+
+                .hero-header {
+                    flex-direction: column;
+                    gap: 8px;
+                    font-size: 9px;
+                }
+
+                .hero-meta {text-align: left;}
+                .hero h1 {font-size: clamp(42px, 8vw, 72px);}
+                .hero-description {font-size: 11px;}
+                .results {padding: 30px 20px;}
+
+                .section-top {
+                    align-items: flex-start;
+                    flex-direction: column;
+                }
+
+                .board {grid-template-columns: repeat(2, minmax(0, 1fr));}
+
+                .street:nth-child(2n) {border-right: 0;}
+
+                .street:nth-child(-n+2) {border-bottom: 1px solid #222;}
+
+                .lane {min-height: 365px;}
+
+                .spheres {min-height: 290px;}
+
+                .spheres > .token {
+                    width: 42px;
+                    height: 42px;
+                }
+
+                /* LEYENDA */
+                .board-bottom {
+                    grid-template-columns: 1fr;
+                    gap: 18px;
+                    padding: 18px 14px;
+                }
+
+                .board-legend {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                    gap: 12px;
+                }
+
+                .legend-shapes {min-height: 72px;}
+
+                .legend-shapes .token {
+                    left: 50%;
+                    top: 50%;
+                    width: 50px;
+                    height: 50px;
+                    transform: translate(-50%, -50%);
+                }
+
+                .legend-tile p {margin-top: 10px; font-size: 13px;}
+                .legend-tile p strong {font-size: 15px;}
+
+                .legend-tile p {font-size: 13px;}
+                .legend-tile p strong {font-size: 15px;}
+                .variables {grid-template-columns: repeat(2, minmax(0, 1fr));}
+                .daily-summary-head {
+                    align-items: flex-start;
+                    flex-direction: column;
+                }
+
+                .daily-summary-meta {text-align: left;}
+                .daily-highlights {grid-template-columns: repeat(2, minmax(0, 1fr));}
+                .daily-summary-toolbar {align-items: flex-start; flex-direction: column;}
+                .buenos-aires {grid-template-columns: 1fr;}
+
+            }
+
+            /* =========================================================
+            MÓVIL
+            ========================================================= */
+
+            @media (max-width: 600px) {
+
+                .hero {
+                    display: grid;
+                    grid-template-columns: 1fr;
+                    grid-template-rows:
+                        minmax(480px, 58svh)
+                        minmax(320px, 42svh);
+                    min-height: 100svh;
+                    overflow: hidden;
+                }
+
+                .hero-copy {
+                    grid-column: 1;
+                    grid-row: 1;
+                    position: relative;
+                    height: auto;
+                    padding: 18px 18px 16px;
+                    border-bottom: 1px solid var(--linea);
+                    overflow: visible;
+                }
+
+                .hero-header {
+                    flex-direction: column;
+                    gap: 6px;
+                    padding-bottom: 10px;
+                    font-size: 8px;
+                    line-height: 1.4;
+                }
+
+                .hero-meta {text-align: left;}
+
+                .hero-content {
+                    flex: 1;
+                    justify-content: center;
+                    align-items: flex-start;
+                    padding: 18px 0;
+                }
+
+                .kicker {
+                    margin-bottom: 14px;
+                    padding: 5px 7px;
+                    font-size: 8px;
+                }
+
+                .hero h1 {
+                    font-size: clamp(46px, 14vw, 70px);
+                    line-height: .88;
+                }
+
+                .hero-description {
+                    max-width: 300px;
+                    margin-top: 18px;
+                    font-size: 11px;
+                    line-height: 1.5;
+                }
+
+                .hero-note {
+                    margin-top: 14px;
+                    font-size: 9px;
+                    line-height: 1.5;
+                }
+
+                .hero-footer {
+                    position: static;
+                    margin-top: auto;
+                    padding-top: 9px;
+                    font-size: 8px;
+                }
+
+                #rain {
+                    position: relative;
+                    inset: auto;
+                    grid-column: 1;
+                    grid-row: 2;
+                    width: 100%;
+                    height: 100%;
+                    overflow: hidden;
+                }
+
+                #rain canvas {
+                    width: 100%;
+                    height: 100%;
+                }
+
+                .hero-divider {display: none;}
+
+
+                /* -----------------------------------------
+                CONTENIDO
+                ----------------------------------------- */
+
+                .results {padding: 28px 14px;}
+
+                .section-top {
+                    align-items: flex-start;
+                    flex-direction: column;
+                    gap: 15px;
+                }
+
+                .section-top h2 {font-size: clamp(34px, 10vw, 46px);}
+                .section-top p {font-size: 11px;}
+
+
+                /* -----------------------------------------
+                SELECTORES
+                ----------------------------------------- */
+
+                .day-navigation {
+                    display: grid;
+                    grid-template-columns: auto minmax(0, 1fr);
+
+                    gap: 10px;
+                    align-items: center;
+                }
+
+                .day-navigation select {
+                    width: 100%;
+                    min-width: 0;
+                }
+
+                .day-navigation p {grid-column: 1 / -1;}
+
+
+                /* -----------------------------------------
+                TABLERO
+                una calle por fila
+                ----------------------------------------- */
+
+                .board-wrap {
+                    overflow: visible;
+                    padding: 8px 5px 0;
+                }
+
+                .board {
+                    min-width: 0;
+                    grid-template-columns: 1fr;
+                }
+
+                .street,
+                .street:nth-child(2n) {
+                    border-right: 0;
+                    border-bottom: 1px solid #222;
+                }
+
+                .street:last-child {border-bottom: 0;}
+                .street-heading {padding: 10px 5px 8px;}
+                .street-name {font-size: 16px;}
+                .lane {min-height: 315px;}
+
+                .spheres {
+                    min-height: 240px;
+                    padding: 5px 4px 8px;
+                }
+
+                .spheres > .token {
+                    width: 38px;
+                    height: 38px;
+                }
+
+                .side-label {font-size: 9px;}
+                .side-count {font-size: 8px;}
+
+                .board-bottom {
+                    min-width: 0;
+                    grid-template-columns: 1fr;
+                    padding: 16px 10px;
+                    gap: 18px;
+                }
+
+                .board-legend {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                    gap: 10px;
+                }
+
+                .legend-shapes {
+                    min-height: 66px;
+                    padding: 0;
+                }
+
+                .legend-shapes .token {
+                    left: 50%;
+                    top: 50%;
+                    width: 46px;
+                    height: 46px;
+                    transform: translate(-50%, -50%);
+                }
+
+                .legend-tile p {margin-top: 10px; font-size: 12px;}
+                .legend-tile p strong {font-size: 14px;}
+
+                .board-question h3 {font-size: 24px;}
+                .board-question ol {font-size: 12px; line-height: 1.65;}
+
+                .daily-summary {
+                    margin-top: 24px;
+                    padding: 20px 0 24px;
+                }
+
+                .daily-summary h3 {font-size: 30px;}
+                .daily-summary-meta {font-size: 12px;}
+                .daily-highlights {grid-template-columns: 1fr 1fr; gap: 8px;}
+                .daily-highlight {padding: 12px;}
+                .daily-highlight strong {font-size: 16px;}
+                .daily-highlight small {font-size: 11px;}
+                .daily-tabs {width: 100%;}
+                .daily-tab {flex: 1; text-align: center;}
+                .daily-summary-note {font-size: 11px;}
+                .daily-table {min-width: 680px;}
+                .daily-table th,
+                .daily-table td {padding: 10px; font-size: 12px;}
+
+            }
+
+            /* =========================================================
+            MÓVILES PEQUEÑOS
+            ========================================================= */
+
+            @media (max-width: 380px) {
+
+                .hero {
+                    grid-template-rows:
+                        minmax(460px, 60svh)
+                        minmax(280px, 40svh);
+                }
+
+                .hero-copy {
+                    padding:
+                        15px 14px
+                        14px;
+                }
+
+                .hero h1 {font-size: clamp(42px, 14vw, 56px);}
+
+                .hero-description {font-size: 10px;}
+
+                .spheres > .token {
+                    width: 34px;
+                    height: 34px;
+                }
+
+                .variables {grid-template-columns: 1fr;}
+
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+
+                .token {
+                    animation-duration: .01ms;
+                    animation-delay: 0ms !important;
+                }
+
+            }
+
+            /* =========================================================
+            AJUSTE TIPOGRÁFICO GENERAL
+            ========================================================= */
+
+            /* HERO */
+            .hero-header {font-size: 13px;}
+            .kicker {font-size: 12px;}
+
+            .hero-description {
+                max-width: 430px;
+                font-size: 16px;
+                line-height: 1.6;
+            }
+
+            .hero-note {font-size: 12px;}
+            .hero-footer {font-size: 11px;}
+
+            /* ENCABEZADO DE RESULTADOS */
+            .section-label {font-size: 12px;}
+
+            .section-top p {
+                max-width: 500px;
+                font-size: 15px;
+                line-height: 1.65;
+            }
+
+            /* INFORMACIÓN / FILTROS */
+            .summary {font-size: 13px;}
+            .day-navigation label {font-size: 12px;}
+            .day-navigation select {font-size: 14px;}
+            .day-navigation p {font-size: 12px;}
+            .status {font-size: 12px;}
+
+            /* TABLERO */
+            .street-number {font-size: 10px;}
+            .street-name {font-size: clamp(16px, 1.5vw, 21px);}
+            .side-label {font-size: 12px;}
+            .side-count {font-size: 11px;}
+            .street-total {font-size: 11px;}
+
+            /* LEYENDA INTERNA DEL TABLERO */
+            .legend-tile p {
+                font-size: 11px;
+                line-height: 1.45;
+            }
+
+            .board-question h3 {font-size: clamp(22px, 2vw, 30px);}
+
+            .board-question ol {
+                font-size: 11px;
+                line-height: 1.65;
+            }
+
+            .board-foot {font-size: 10px;}
+
+            /* LEYENDA EXTERIOR */
+            .variable strong {font-size: 12px;}
+            .variable small {font-size: 11px;}
+
+            /* TEXTO VALPARAÍSO / BUENOS AIRES */
+            .buenos-aires h3 {font-size: 12px;}
+
+            .buenos-aires p {
+                max-width: 650px;
+                font-size: 14px;
+                line-height: 1.7;
+            }
+
+            /* FOOTER */
+            footer {font-size: 11px;}
+
+            /* =========================================================
+            AJUSTE TIPOGRÁFICO MÓVIL
+            ========================================================= */
+
+            @media (max-width: 600px) {
+
+                .hero-header {
+                    font-size: 10px;
+                    line-height: 1.45;
+                }
+
+                .kicker {font-size: 10px;}
+
+                .hero-description {
+                    max-width: 340px;
+                    font-size: 14px;
+                    line-height: 1.55;
+                }
+
+                .hero-note {
+                    font-size: 11px;
+                    line-height: 1.5;
+                }
+
+                .hero-footer {font-size: 9px;}
+                .section-label {font-size: 11px;}
+
+                .section-top p {
+                    font-size: 14px;
+                    line-height: 1.6;
+                }
+
+                .summary {
+                    font-size: 12px;
+                    line-height: 1.5;
+                }
+
+                .day-navigation label {font-size: 11px;}
+
+                .day-navigation select {font-size: 14px;}
+
+                .day-navigation p {
+                    font-size: 11px;
+                    line-height: 1.55;
+                }
+
+                .status {font-size: 11px;}
+                .street-number {font-size: 9px;}
+                .street-name {font-size: 18px;}
+                .side-label {font-size: 11px;}
+                .side-count {font-size: 10px;}
+                .street-total {font-size: 10px;}
+                .legend-tile p {font-size: 11px;}
+                .board-question h3 {font-size: 24px;}
+
+                .board-question ol {
+                    font-size: 11px;
+                    line-height: 1.65;
+                }
+
+                .board-foot {font-size: 9px;}
+                .variable strong {font-size: 12px;}
+                .variable small {font-size: 11px;}
+                .buenos-aires h3 {font-size: 12px;}
+
+                .buenos-aires p {
+                    font-size: 14px;
+                    line-height: 1.65;
+                }
+
+                footer {
+                    font-size: 10px;
+                    line-height: 1.5;
+                }
+            }
+
+            /* =========================================================
+            TIPOGRAFÍA ESCRITORIO / NOTEBOOK
+            ========================================================= */
+
+            @media (min-width: 901px) {
+                .hero-header {font-size: 16px;}
+                .kicker {font-size: 14px;}
+                .hero-description {max-width: 520px; font-size: 19px; line-height: 1.55;}
+                .hero-note {font-size: 14px; line-height: 1.6;}
+                .hero-footer {font-size: 12px;}
+
+                .section-label {font-size: 14px;}
+                .section-top p {max-width: 560px; font-size: 18px; line-height: 1.6;}
+
+                .summary {font-size: 15px;}
+                .day-navigation label {font-size: 14px;}
+                .day-navigation select {min-width: 210px; padding: 12px 14px; font-size: 16px;}
+                .day-navigation p {font-size: 14px;}
+                .status {font-size: 14px;}
+
+                .street-number {font-size: 11px;}
+                .street-name {font-size: clamp(19px, 1.5vw, 25px);}
+                .side-label {font-size: 14px;}
+                .side-count {font-size: 12px;}
+                .street-total {font-size: 12px;}
+
+                .legend-tile p {font-size: 13px; line-height: 1.45;}
+                .board-question h3 {font-size: clamp(28px, 2vw, 36px);}
+                .board-question ol {font-size: 13px; line-height: 1.65;}
+                .board-foot {font-size: 11px;}
+
+                .variable strong {font-size: 14px;}
+                .variable small {font-size: 12px;}
+
+                .buenos-aires h3 {font-size: 14px;}
+                .buenos-aires p {max-width: 720px; font-size: 17px; line-height: 1.65;}
+
+                footer {font-size: 12px;}
+            }
+
+
+            /* =========================================================
+            FICHA DIARIA · AJUSTE DE ANCHO Y RESPONSIVE
+            ========================================================= */
+
+            @media (min-width: 901px) {
+                .daily-table-wrap.street-view {
+                    width: 100%;
+                    overflow: visible;
+                }
+
+                .daily-table.street-table {
+                    width: 100%;
+                    min-width: 0;
+                }
+
+                .daily-table-wrap.variable-view {
+                    display: inline-block;
+                    width: fit-content;
+                    max-width: 100%;
+                    overflow: visible;
+                }
+
+                .daily-table.variable-table {
+                    width: auto;
+                    min-width: 560px;
+                }
+
+                .variable-table th:first-child,
+                .variable-table td:first-child {min-width: 220px;}
+
+                .variable-table .number {
+                    width: 76px;
+                    min-width: 76px;
+                }
+            }
+
+            @media (max-width: 900px) {
+                .daily-table-wrap,
+                .daily-table-wrap.street-view,
+                .daily-table-wrap.variable-view {
+                    width: 100%;
+                    border: 0;
+                    overflow: visible;
+                }
+
+                .daily-table,
+                .daily-table.street-table,
+                .daily-table.variable-table {
+                    display: block;
+                    width: 100%;
+                    min-width: 0;
+                    background: transparent;
+                }
+
+                .daily-table thead {display: none;}
+
+                .daily-table tbody {
+                    display: grid;
+                    gap: 10px;
+                }
+
+                .daily-table tbody tr {
+                    display: grid;
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                    border: 1px solid #aaa;
+                    background: #fff;
+                }
+
+                .daily-table td {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    gap: 12px;
+                    min-width: 0;
+                    padding: 10px 12px;
+                    border-right: 0;
+                    border-bottom: 1px solid #ddd;
+                    text-align: right;
+                    white-space: normal;
+                }
+
+                .daily-table td::before {
+                    content: attr(data-label);
+                    flex: 0 0 auto;
+                    color: #666;
+                    font-size: 10px;
+                    font-weight: 700;
+                    letter-spacing: .04em;
+                    text-align: left;
+                    text-transform: uppercase;
+                }
+
+                .daily-table td:first-child {
+                    grid-column: 1 / -1;
+                    background: #e5e5e5;
+                    font-size: 15px;
+                    text-align: left;
+                }
+
+                .street-table td.detail {grid-column: 1 / -1;}
+                .daily-table .number {width: auto; text-align: right;}
+                .daily-table tbody tr:hover {background: #fff;}
+            }
+
+            @media (max-width: 600px) {
+                .daily-highlights {grid-template-columns: 1fr;}
+
+                .daily-table tbody tr {grid-template-columns: 1fr;}
+
+                .daily-table td,
+                .daily-table td:first-child,
+                .street-table td.detail {grid-column: 1 / -1;}
+
+                .daily-table td {font-size: 13px;}
+
+                .daily-table td::before {
+                    font-size: 10px;
+                    max-width: 48%;
+                }
+
+                .variable-pill {justify-content: flex-end;}
+            }
+
+
+            /* =========================================================
+            FICHA DIARIA · AJUSTE FINAL DE ESCRITORIO
+            ========================================================= */
+
+            @media (min-width: 901px) {
+                .daily-table-wrap.variable-view {
+                    display: block;
+                    width: 100%;
+                    max-width: none;
+                    overflow: visible;
+                }
+
+                .daily-table.variable-table {
+                    width: 100%;
+                    min-width: 0;
+                    table-layout: fixed;
+                }
+
+                .variable-table th:first-child,
+                .variable-table td:first-child {
+                    width: 36%;
+                    min-width: 0;
+                }
+
+                .variable-table .number {
+                    width: 16%;
+                    min-width: 0;
+                    text-align: center;
+                }
+            }
+
+            /* Evita la doble línea entre Ficha del día y Valparaíso/Buenos Aires */
+            .buenos-aires {
+                margin-top: 26px;
+                border-top: 0;
+            }
+
+        </style>
+
+    </head>
+
+    <body>
+
+        <section class="hero">
+
+            <div id="rain"></div>
+            <div class="hero-divider"></div>
+
+            <div class="hero-copy">
+
+                <header class="hero-header">
+                    <div>
+                        Pontificia Universidad Católica de Valparaíso<br>Escuela de Arquitectura y Diseño
+                    </div>
+                    <div class="hero-meta">
+                        Taller de Diseño de Servicios 2026<br>Investigación territorial
+                    </div>
+                </header>
+
+                <div class="hero-content">
+                    <div class="kicker">Visualización de resultados</div>
+                    <h1>
+                        Tramas<br>
+                        de <span>elección</span>
+                    </h1>
+                    <p class="hero-description">Un registro colectivo de las percepciones que construyen la experiencia de caminar por la ciudad.</p>
+                    <p class="hero-note">
+                        VALPARAÍSO ↔ BUENOS AIRES<br>Calles, decisiones y experiencias urbanas.
+                    </p>
+                </div>
+
+                <div class="hero-footer">Observación · Percepción · Territorio</div>
+
+            </div>
+
+        </section>
+
+        <main class="results">
+
+            <div class="section-top">
+                <div>
+                    <div class="section-label">01 / Datos colectivos</div>
+                    <h2>
+                        Una elección,<br>muchas percepciones.
+                    </h2>
+                </div>
+                <p>Las fichas muestran cómo se distribuyen las valoraciones sobre distintas calles y variables de la experiencia peatonal. La información se actualiza automáticamente a medida que se incorporan nuevos registros.</p>
+            </div>
+
+            <div class="summary">
+
+                <span id="recordSummary">
+                    <strong>Conectando con Supabase…</strong>
+                </span>
+                <span id="connectionStatus">Estableciendo conexión</span>
+
+            </div>
+
+            <div class="day-navigation">
+
+                <label for="fecha">Fecha</label>
+                <select id="fecha">
+                    <option value="">Cargando fechas…</option>
+                </select>
+
+                <label for="lugar">Ciudad</label>
+                <select id="lugar">
+                    <option value="valparaiso">Valparaíso</option>
+                    <option value="buenosaires">Buenos Aires</option>
+                </select>
+
+                <p>Vista pública de consulta. Los cambios en los registros se reflejan en tiempo real.</p>
+
+            </div>
+
+            <div id="status" class="status" role="status">Cargando registros…</div>
+
+            <div class="board-wrap">
+                <div class="board" id="board"></div>
+
+                <div class="board-bottom">
+
+                    <div class="board-legend">
+
+                        <div class="legend-tile">
+                            <div class="legend-shapes">
+                                <span class="token yellow"><img src="assets/picto.ficha.Amarillo.svg" alt="" aria-hidden="true"></span>
+                            </div>
+                            <p>
+                                Amarillo
+                                <strong>Luminosidad</strong>
+                            </p>
+                        </div>
+
+                        <div class="legend-tile">
+                            <div class="legend-shapes">
+                                <span class="token green"><img src="assets/picto.ficha.Verde.svg" alt="" aria-hidden="true"></span>
+                            </div>
+                            <p>
+                                Verde
+                                <strong>Transitabilidad</strong>
+                            </p>
+                        </div>
+
+                        <div class="legend-tile">
+                            <div class="legend-shapes">
+                                <span class="token blue"><img src="assets/picto.ficha.Azul.svg" alt="" aria-hidden="true"></span>
+                            </div>
+                            <p>
+                                Azul
+                                <strong>Seguridad</strong>
+                            </p>
+                        </div>
+
+                        <div class="legend-tile">
+                            <div class="legend-shapes">
+                                <span class="token red"><img src="assets/picto.ficha.Rojo.svg" alt="" aria-hidden="true"></span>
+                            </div>
+                            <p>
+                                Rojo
+                                <strong>Actividad urbana</strong>
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <div class="board-question">
+                        <h3>¿Qué nos dicen las fichas?</h3>
+                        <ol>
+                            <li>Cada pentágono representa una ficha registrada.</li>
+                            <li>El color identifica la variable de percepción.</li>
+                            <li>La columna indica la calle elegida.</li>
+                            <li>El lado muestra una valoración positiva o negativa.</li>
+                        </ol>
+                    </div>
+
+                </div>
+
+                <div class="board-foot">
+                    <span>Tramas de elección · 2026</span>
+                    <span>Datos compartidos en tiempo real</span>
+                </div>
+
+            </div>
+
+            <section class="daily-summary" id="dailySummary">
+
+                <div class="daily-summary-head">
+                    <div>
+                        <div class="daily-summary-label">02 / Lectura cuantitativa</div>
+                        <h3>Ficha del día</h3>
+                    </div>
+                    <div class="daily-summary-meta" id="dailySummaryMeta">—</div>
+                </div>
+
+                <div class="daily-highlights">
+                    <div class="daily-highlight">
+                        <span>Calle más positiva</span>
+                        <strong id="mostPositiveStreet">—</strong>
+                        <small id="mostPositiveStreetValue">—</small>
+                    </div>
+
+                    <div class="daily-highlight">
+                        <span>Calle más negativa</span>
+                        <strong id="mostNegativeStreet">—</strong>
+                        <small id="mostNegativeStreetValue">—</small>
+                    </div>
+
+                    <div class="daily-highlight">
+                        <span>Variable positiva más usada</span>
+                        <strong id="mostPositiveVariable">—</strong>
+                        <small id="mostPositiveVariableValue">—</small>
+                    </div>
+
+                    <div class="daily-highlight">
+                        <span>Variable negativa más usada</span>
+                        <strong id="mostNegativeVariable">—</strong>
+                        <small id="mostNegativeVariableValue">—</small>
+                    </div>
+                </div>
+
+                <div class="daily-summary-toolbar">
+                    <div class="daily-tabs" role="group" aria-label="Vista de datos">
+                        <button class="daily-tab active" type="button" data-daily-view="streets" aria-pressed="true">Por calle</button>
+                        <button class="daily-tab" type="button" data-daily-view="variables" aria-pressed="false">Por variable</button>
+                    </div>
+
+                    <p class="daily-summary-note">Los valores corresponden a la fecha y ciudad seleccionadas.</p>
+                </div>
+
+                <div id="dailyTableContainer"></div>
+
+            </section>
+
+            <div class="buenos-aires">
+
+                <div>
+                    <h3>Valparaíso</h3>
+                    <p>Las percepciones recogidas permiten observar cómo se experimentan distintas calles a partir de sus condiciones de seguridad, luminosidad, transitabilidad y actividad urbana.</p>
+                </div>
+
+                <div>
+                    <h3>Buenos Aires</h3>
+                    <p>La misma estructura de registro permite reunir y consultar las observaciones de ambas ciudades, manteniendo la relación entre calle, valoración y variable percibida.</p>
+                </div>
+
+            </div>
+
+            <footer>
+                <span>Tramas de elección · 2026</span>
+                <span>Taller de Diseño de Servicios · PUCV</span>
+            </footer>
+
+        </main>
+
+        <script>
+            const SUPABASE_URL = "https://mbkyszjxiqxhvqdqpxzd.supabase.co";
+            const SUPABASE_KEY = "sb_publishable_g4tlWVRipA6ByuDDBU0PQg_9PS6fvGh";
+            const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            const streets = ["Serrano", "Cochrane", "Blanco", "Errázuriz"];
+            const variables = {
+                blue: "Seguridad",
+                yellow: "Luminosidad",
+                green: "Transitabilidad",
+                red: "Actividad urbana"
+            };
+
+            let registros = [];
+            let selectedDate = "";
+            let realtimeChannel = null;
+            let refreshTimer = null;
+            let dailyViewMode = "streets";
+
+            const $ = id => document.getElementById(id);
+            const today = () => {
+                const d = new Date();
+                return [d.getFullYear(), String(d.getMonth() + 1).padStart(2, "0"), String(d.getDate()).padStart(2, "0")].join("-")
+            };
+
+            function setStatus(message) {$("status").textContent = message}
+            function setConnection(message) {$("connectionStatus").textContent = message}
+
+            function formatDate(value) {
+                if (!value)
+                    return "Sin fecha";
+                const [year,month,day] = value.split("-");
+                return day + "/" + month + "/" + year;
+            }
+
+            function updateDateOptions() {
+                const select = $("fecha");
+                const dates = [...new Set(registros.map(r => r.fecha).filter(Boolean))].sort( (a, b) => b.localeCompare(a));
+
+                if (!dates.length) {
+                    select.innerHTML = '<option value="">Sin fechas registradas</option>';
+                    selectedDate = "";
+                    return;
+                }
+
+                if (!selectedDate || !dates.includes(selectedDate))
+                    selectedDate = dates.includes(today()) ? today() : dates[0];
+                select.innerHTML = "";
+
+                dates.forEach(date => {
+                    const option = document.createElement("option");
+                    option.value = date;
+                    option.textContent = formatDate(date);
+                    select.appendChild(option);
+                });
+
+                select.value = selectedDate;
+            }
+
+            /* =========================================================
+            GENERACIÓN Y MEZCLA ESTABLE DE FICHAS
+            ========================================================= */
+
+            function hashString(text) {
+
+                let hash = 2166136261;
+
+                for (let i = 0; i < text.length; i++) {
+                    hash ^= text.charCodeAt(i);
+                    hash = Math.imul(hash, 16777619);
+                }
+
+                return hash >>> 0;
+            }
+
+            function seededRandom(seed) {
+
+                return function() {
+
+                    seed += 0x6D2B79F5;
+
+                    let t = seed;
+
+                    t = Math.imul(
+                        t ^ (t >>> 15),
+                        t | 1
+                    );
+
+                    t ^= t + Math.imul(
+                        t ^ (t >>> 7),
+                        t | 61
+                    );
+
+                    return (
+                        (t ^ (t >>> 14)) >>> 0
+                    ) / 4294967296;
+
+                };
+            }
+
+            function getTokenCounts(items) {
+
+                const counts = {
+                    red: 0,
+                    green: 0,
+                    blue: 0,
+                    yellow: 0
+                };
+
+
+                items.forEach(item => {
+
+                    if (!(item.variable in counts)) {return;}
+
+                    const quantity = Math.min(
+                        Math.max(
+                            Number(item.cantidad) || 0,
+                            0
+                        ),
+                        200
+                    );
+
+                    counts[item.variable] += quantity;
+
+                });
+
+                return counts;
+            }
+
+            /* Construye una secuencia visualmente mezclada.
+            Reduce la posibilidad de que aparezcan bloques
+            demasiado largos de un mismo color.
+            Respetando exactamente
+            las cantidades registradas. */
+            function createStableTokenSequence(items, seedBase) {
+
+                const counts = getTokenCounts(items);
+
+                const remaining = {
+                    ...counts
+                };
+
+                const signature = [
+                    counts.red,
+                    counts.green,
+                    counts.blue,
+                    counts.yellow
+                ].join("-");
+
+                const random = seededRandom(
+                    hashString(
+                        seedBase + "|" + signature
+                    )
+                );
+
+                const sequence = [];
+
+                let previous = null;
+                let consecutive = 0;
+
+                while (
+                    Object.values(remaining)
+                        .some(value => value > 0)
+                ) {
+
+                    const available = Object.keys(remaining)
+                        .filter(color => remaining[color] > 0);
+
+                    if (available.length === 1) {
+
+                        const color = available[0];
+
+                        sequence.push(color);
+                        remaining[color]--;
+
+                        continue;
+
+                    }
+
+                    const weighted = available.map(color => {
+
+                        let weight = remaining[color];
+
+                        weight *= 0.85 + random() * 0.3;
+
+                        if (color === previous) {
+
+                            weight *= consecutive >= 2
+                                ? 0.08
+                                : 0.28;
+
+                        }
+
+                        return {
+                            color,
+                            weight
+                        };
+
+                    });
+
+                    const totalWeight = weighted.reduce(
+                        (sum, item) => sum + item.weight,
+                        0
+                    );
+
+                    let target = random() * totalWeight;
+                    let selected = weighted[0].color;
+
+
+                    for (const item of weighted) {
+
+                        target -= item.weight;
+
+                        if (target <= 0) {
+
+                            selected = item.color;
+                            break;
+
+                        }
+
+                    }
+
+                    sequence.push(selected);
+                    remaining[selected]--;
+
+
+                    if (selected === previous) {
+                        consecutive++;
+
+                    } else {
+                        previous = selected;
+                        consecutive = 1;
+                    }
+
+                }
+
+                return sequence;
+
+            }
+
+            /* =========================================================
+            POSICIONAMIENTO FÍSICO DE FICHAS
+            ========================================================= */
+
+            function layoutTokensFallback(container, tokens, seedBase) {
+
+                if (!tokens.length)
+                    return;
+
+                const width = Math.max(1, container.clientWidth);
+                const height = Math.max(1, container.clientHeight);
+                const size = parseFloat(getComputedStyle(tokens[0]).width) || 43;
+                const half = size / 2;
+
+                const random = seededRandom(
+                    hashString(seedBase + "|fallback|" + Math.round(width))
+                );
+
+                const usableWidth = Math.max(1, width - size);
+                const rowHeight = size * .58;
+                const capacity = Math.max(1, Math.floor(width / (size * .68)));
+
+                tokens.forEach((token, index) => {
+
+                    const row = Math.floor(index / capacity);
+
+                    const x =
+                        half
+                        + random() * usableWidth;
+
+                    const y =
+                        height
+                        - half
+                        - row * rowHeight
+                        - random() * size * .16;
+
+                    const angle =
+                        (-.58 + random() * 1.16);
+
+                    token.style.setProperty("--x", x.toFixed(2) + "px");
+                    token.style.setProperty("--y", y.toFixed(2) + "px");
+                    token.style.setProperty("--giro", angle.toFixed(4) + "rad");
+                    token.style.setProperty("--entrada-x", "0px");
+                    token.style.setProperty("--rebote-x", ((random() - .5) * 5).toFixed(2) + "px");
+                    token.style.setProperty("--orden", index + 1);
+
+                    token.classList.remove("token-pending");
+
+                });
+            }
+
+
+            function layoutTokensWithMatter(container, tokens, seedBase) {
+
+                if (!tokens.length)
+                    return;
+
+                if (!window.Matter) {
+                    layoutTokensFallback(container, tokens, seedBase);
+                    return;
+                }
+
+                const {
+                    Engine,
+                    Bodies,
+                    Body,
+                    Composite
+                } = Matter;
+
+                const width = Math.max(1, container.clientWidth);
+                const height = Math.max(1, container.clientHeight);
+
+                const tokenSize =
+                    parseFloat(getComputedStyle(tokens[0]).width)
+                    || 43;
+
+                const visualRadius = tokenSize / 2;
+
+                /* Misma relación cuerpo/visual que en el Hero:
+                   el pentágono físico es apenas menor que el visible. */
+                const collisionRadius =
+                    visualRadius / 1.18;
+
+                const visualOverflow =
+                    visualRadius - collisionRadius;
+
+                const engine = Engine.create({
+                    enableSleeping: true
+                });
+
+                /* Mismos parámetros generales del Hero. */
+                engine.gravity.y = .9;
+                engine.gravity.scale = .00105;
+                engine.positionIterations = 12;
+                engine.velocityIterations = 10;
+                engine.constraintIterations = 4;
+
+                const thickness = 100;
+                const innerOffset = Math.max(1, visualOverflow + 2);
+                const floorTop = height - visualOverflow - 2;
+
+                const floor = Bodies.rectangle(
+                    width / 2,
+                    floorTop + thickness / 2,
+                    width + thickness * 2,
+                    thickness,
+                    {
+                        isStatic: true,
+                        render: {visible: false}
+                    }
+                );
+
+                const leftWall = Bodies.rectangle(
+                    innerOffset - thickness / 2,
+                    height / 2,
+                    thickness,
+                    height * 3,
+                    {
+                        isStatic: true,
+                        render: {visible: false}
+                    }
+                );
+
+                const rightWall = Bodies.rectangle(
+                    width - innerOffset + thickness / 2,
+                    height / 2,
+                    thickness,
+                    height * 3,
+                    {
+                        isStatic: true,
+                        render: {visible: false}
+                    }
+                );
+
+                Composite.add(
+                    engine.world,
+                    [floor, leftWall, rightWall]
+                );
+
+                const random = seededRandom(
+                    hashString(
+                        seedBase
+                        + "|hero-physics|"
+                        + Math.round(width)
+                        + "x"
+                        + Math.round(height)
+                        + "|"
+                        + tokens.length
+                    )
+                );
+
+                const configs = tokens.map((token, index) => {
+
+                    const minX =
+                        visualRadius + 2;
+
+                    const maxX =
+                        Math.max(
+                            minX,
+                            width - visualRadius - 2
+                        );
+
+                    return {
+                        token,
+                        index,
+                        spawnX:
+                            minX
+                            + random() * (maxX - minX),
+
+                        spawnY:
+                            -80
+                            - random() * height * .18,
+
+                        angle:
+                            -.5
+                            + random(),
+
+                        velocityX:
+                            -.12
+                            + random() * .24,
+
+                        angularVelocity:
+                            -.004
+                            + random() * .008,
+
+                        bounceX:
+                            -.5
+                            + random()
+                    };
+                });
+
+                const bodies = [];
+                const fixedDelta = 1000 / 60;
+
+                /* El Hero comienza espaciando bastante las fichas y luego
+                   acelera. Aquí usamos una progresión equivalente, pero
+                   determinista y calculada de una vez. */
+                const spawnSchedule = [];
+                let spawnStep = 0;
+                let interval = 36;
+
+                configs.forEach((config, index) => {
+                    spawnSchedule.push({
+                        step: spawnStep,
+                        config
+                    });
+
+                    interval =
+                        Math.max(
+                            8,
+                            interval - (index > 5 ? 1 : 0)
+                        );
+
+                    spawnStep += interval;
+                });
+
+                const lastSpawnStep =
+                    spawnSchedule.length
+                        ? spawnSchedule[spawnSchedule.length - 1].step
+                        : 0;
+
+                const totalSteps =
+                    lastSpawnStep + 900;
+
+                let nextSpawn = 0;
+
+                for (
+                    let step = 0;
+                    step < totalSteps;
+                    step++
+                ) {
+
+                    while (
+                        nextSpawn < spawnSchedule.length
+                        && spawnSchedule[nextSpawn].step <= step
+                    ) {
+                        const config =
+                            spawnSchedule[nextSpawn].config;
+
+                        const body = Bodies.polygon(
+                            config.spawnX,
+                            config.spawnY,
+                            5,
+                            collisionRadius,
+                            {
+                                restitution: 0,
+                                friction: 1,
+                                frictionStatic: 1,
+                                frictionAir: .025,
+                                density: .002,
+                                slop: .04,
+                                sleepThreshold: 18,
+                                angle: config.angle,
+                                render: {visible: false}
+                            }
+                        );
+
+                        body.plugin = {
+                            tokenIndex: config.index,
+                            spawnX: config.spawnX,
+                            settled: false,
+                            settleFrames: 0
+                        };
+
+                        Body.setVelocity(
+                            body,
+                            {
+                                x: config.velocityX,
+                                y: 0
+                            }
+                        );
+
+                        Body.setAngularVelocity(
+                            body,
+                            config.angularVelocity
+                        );
+
+                        bodies.push(body);
+                        Composite.add(engine.world, body);
+
+                        nextSpawn++;
+                    }
+
+                    Engine.update(
+                        engine,
+                        fixedDelta
+                    );
+
+                    /* Copia la lógica de asentamiento del Hero:
+                       una ficha que queda quieta pasa a ser estática,
+                       por lo que las siguientes se apoyan realmente sobre ella. */
+                    bodies.forEach(body => {
+
+                        if (body.plugin?.settled)
+                            return;
+
+                        const speed =
+                            Math.hypot(
+                                body.velocity.x,
+                                body.velocity.y
+                            );
+
+                        if (
+                            speed < .18
+                            && Math.abs(body.angularVelocity) < .025
+                            && body.position.y > 0
+                        ) {
+                            body.plugin.settleFrames++;
+
+                            if (body.plugin.settleFrames > 28) {
+                                Body.setVelocity(
+                                    body,
+                                    {x: 0, y: 0}
+                                );
+
+                                Body.setAngularVelocity(
+                                    body,
+                                    0
+                                );
+
+                                Body.setStatic(
+                                    body,
+                                    true
+                                );
+
+                                body.plugin.settled = true;
+                            }
+
+                        } else {
+                            body.plugin.settleFrames = 0;
+                        }
+
+                    });
+                }
+
+                bodies.forEach(body => {
+
+                    const config =
+                        configs[
+                            body.plugin.tokenIndex
+                        ];
+
+                    const token =
+                        config.token;
+
+                    /* No aplanamos el eje Y.
+                       La altura final queda exactamente donde Matter.js
+                       dejó reposar cada pentágono. */
+                    const x =
+                        Math.min(
+                            width - visualRadius,
+                            Math.max(
+                                visualRadius,
+                                body.position.x
+                            )
+                        );
+
+                    const y =
+                        body.position.y;
+
+                    const entryX =
+                        config.spawnX - x;
+
+                    token.style.setProperty(
+                        "--x",
+                        x.toFixed(2) + "px"
+                    );
+
+                    token.style.setProperty(
+                        "--y",
+                        y.toFixed(2) + "px"
+                    );
+
+                    token.style.setProperty(
+                        "--giro",
+                        body.angle.toFixed(5) + "rad"
+                    );
+
+                    token.style.setProperty(
+                        "--entrada-x",
+                        entryX.toFixed(2) + "px"
+                    );
+
+                    token.style.setProperty(
+                        "--rebote-x",
+                        (config.bounceX * 6).toFixed(2)
+                        + "px"
+                    );
+
+                    token.style.setProperty(
+                        "--orden",
+                        config.index + 1
+                    );
+
+                    token.classList.remove(
+                        "token-pending"
+                    );
+                });
+
+                Composite.clear(
+                    engine.world,
+                    false
+                );
+
+                Engine.clear(engine);
+            }
+
+
+            /* =========================================================
+            RESUMEN CUANTITATIVO DEL DÍA
+            ========================================================= */
+
+            function sumRecords(records) {
+                return records.reduce((sum, item) => sum + Number(item.cantidad || 0), 0);
+            }
+
+            function getTopEntry(entries) {
+                if (!entries.length)
+                    return null;
+
+                const max = Math.max(...entries.map(entry => entry.value));
+                const tied = entries.filter(entry => entry.value === max);
+
+                return {
+                    value: max,
+                    labels: tied.map(entry => entry.label)
+                };
+            }
+
+            function variableMarkup(variable) {
+                const label = variables[variable] || variable;
+
+                return '<span class="variable-pill">'
+                    + '<span class="variable-dot ' + variable + '"></span>'
+                    + label
+                    + '</span>';
+            }
+
+            function balanceMarkup(value) {
+                const className = value > 0
+                    ? "balance-positive"
+                    : value < 0
+                        ? "balance-negative"
+                        : "balance-neutral";
+
+                const sign = value > 0 ? "+" : "";
+
+                return '<span class="' + className + '">' + sign + value + '</span>';
+            }
+
+            function getVariableCount(records, variable, valuation=null) {
+                return sumRecords(
+                    records.filter(item =>
+                        item.variable === variable
+                        && (!valuation || item.valoracion === valuation)
+                    )
+                );
+            }
+
+            function getDominantVariable(records, valuation) {
+                const entries = Object.keys(variables).map(variable => ({
+                    label: variable,
+                    value: getVariableCount(records, variable, valuation)
+                }));
+
+                const top = getTopEntry(entries);
+
+                if (!top || top.value === 0)
+                    return {label: "—", value: 0, variables: []};
+
+                return {
+                    label: top.labels.map(variable => variables[variable] || variable).join(" / "),
+                    value: top.value,
+                    variables: top.labels
+                };
+            }
+
+            function renderDailyStreetTable(filtered) {
+                const rows = streets.map(street => {
+                    const streetRecords = filtered.filter(item => item.calle === street);
+                    const positive = sumRecords(streetRecords.filter(item => item.valoracion === "positivo"));
+                    const negative = sumRecords(streetRecords.filter(item => item.valoracion === "negativo"));
+                    const total = positive + negative;
+                    const positiveVariable = getDominantVariable(streetRecords, "positivo");
+                    const negativeVariable = getDominantVariable(streetRecords, "negativo");
+
+                    const positiveVariableLabel = positiveVariable.variables.length === 1
+                        ? variableMarkup(positiveVariable.variables[0])
+                        : positiveVariable.label;
+
+                    const negativeVariableLabel = negativeVariable.variables.length === 1
+                        ? variableMarkup(negativeVariable.variables[0])
+                        : negativeVariable.label;
+
+                    return `
+                        <tr>
+                            <td data-label="Calle"><strong>${street}</strong></td>
+                            <td class="number" data-label="Positivas">${positive}</td>
+                            <td class="number" data-label="Negativas">${negative}</td>
+                            <td class="number" data-label="Total">${total}</td>
+                            <td class="number" data-label="Balance">${balanceMarkup(positive - negative)}</td>
+                            <td class="detail" data-label="Variable + más usada">${positiveVariableLabel} <small>(${positiveVariable.value})</small></td>
+                            <td class="detail" data-label="Variable − más usada">${negativeVariableLabel} <small>(${negativeVariable.value})</small></td>
+                        </tr>
+                    `;
+                }).join("");
+
+                return `
+                    <div class="daily-table-wrap street-view">
+                        <table class="daily-table street-table">
+                            <thead>
+                                <tr>
+                                    <th>Calle</th>
+                                    <th class="number">+</th>
+                                    <th class="number">−</th>
+                                    <th class="number">Total</th>
+                                    <th class="number">Balance</th>
+                                    <th>Variable + más usada</th>
+                                    <th>Variable − más usada</th>
+                                </tr>
+                            </thead>
+                            <tbody>${rows}</tbody>
+                        </table>
+                    </div>
+                `;
+            }
+
+            function renderDailyVariableTable(filtered) {
+                const order = ["yellow", "green", "blue", "red"];
+
+                const rows = order.map(variable => {
+                    const positive = getVariableCount(filtered, variable, "positivo");
+                    const negative = getVariableCount(filtered, variable, "negativo");
+                    const total = positive + negative;
+
+                    return `
+                        <tr>
+                            <td data-label="Variable">${variableMarkup(variable)}</td>
+                            <td class="number" data-label="Positivas">${positive}</td>
+                            <td class="number" data-label="Negativas">${negative}</td>
+                            <td class="number" data-label="Total">${total}</td>
+                            <td class="number" data-label="Balance">${balanceMarkup(positive - negative)}</td>
+                        </tr>
+                    `;
+                }).join("");
+
+                return `
+                    <div class="daily-table-wrap variable-view">
+                        <table class="daily-table variable-table">
+                            <thead>
+                                <tr>
+                                    <th>Variable</th>
+                                    <th class="number">+</th>
+                                    <th class="number">−</th>
+                                    <th class="number">Total</th>
+                                    <th class="number">Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>${rows}</tbody>
+                        </table>
+                    </div>
+                `;
+            }
+
+            function renderDailySummary(filtered, place, date) {
+                const container = $("dailyTableContainer");
+                const placeLabel = $("lugar").selectedOptions[0]?.textContent || place;
+
+                $("dailySummaryMeta").textContent =
+                    formatDate(date) + " · " + placeLabel + " · " + sumRecords(filtered) + " fichas";
+
+                if (!filtered.length) {
+                    $("mostPositiveStreet").textContent = "—";
+                    $("mostPositiveStreetValue").textContent = "Sin datos";
+                    $("mostNegativeStreet").textContent = "—";
+                    $("mostNegativeStreetValue").textContent = "Sin datos";
+                    $("mostPositiveVariable").textContent = "—";
+                    $("mostPositiveVariableValue").textContent = "Sin datos";
+                    $("mostNegativeVariable").textContent = "—";
+                    $("mostNegativeVariableValue").textContent = "Sin datos";
+                    container.innerHTML = '<div class="daily-empty">No hay datos disponibles para esta fecha y ciudad.</div>';
+                    return;
+                }
+
+                const streetPositive = streets.map(street => ({
+                    label: street,
+                    value: sumRecords(filtered.filter(item => item.calle === street && item.valoracion === "positivo"))
+                }));
+
+                const streetNegative = streets.map(street => ({
+                    label: street,
+                    value: sumRecords(filtered.filter(item => item.calle === street && item.valoracion === "negativo"))
+                }));
+
+                const topPositiveStreet = getTopEntry(streetPositive);
+                const topNegativeStreet = getTopEntry(streetNegative);
+                const topPositiveVariable = getDominantVariable(filtered, "positivo");
+                const topNegativeVariable = getDominantVariable(filtered, "negativo");
+
+                $("mostPositiveStreet").textContent = topPositiveStreet.labels.join(" / ");
+                $("mostPositiveStreetValue").textContent = topPositiveStreet.value + " fichas positivas";
+
+                $("mostNegativeStreet").textContent = topNegativeStreet.labels.join(" / ");
+                $("mostNegativeStreetValue").textContent = topNegativeStreet.value + " fichas negativas";
+
+                $("mostPositiveVariable").textContent = topPositiveVariable.label;
+                $("mostPositiveVariableValue").textContent = topPositiveVariable.value + " fichas positivas";
+
+                $("mostNegativeVariable").textContent = topNegativeVariable.label;
+                $("mostNegativeVariableValue").textContent = topNegativeVariable.value + " fichas negativas";
+
+                container.innerHTML = dailyViewMode === "variables"
+                    ? renderDailyVariableTable(filtered)
+                    : renderDailyStreetTable(filtered);
+
+                document.querySelectorAll("[data-daily-view]").forEach(button => {
+                    const active = button.dataset.dailyView === dailyViewMode;
+                    button.classList.toggle("active", active);
+                    button.setAttribute("aria-pressed", String(active));
+                });
+            }
+
+
+            function adjustBoardTokenAreaHeight(pendingLayouts) {
+
+                if (!pendingLayouts.length)
+                    return;
+
+                let requiredHeight = 0;
+
+                pendingLayouts.forEach(layout => {
+
+                    const container = layout.container;
+                    const tokens = layout.tokens;
+
+                    if (!tokens.length)
+                        return;
+
+                    const width = Math.max(
+                        1,
+                        container.clientWidth
+                    );
+
+                    const tokenSize =
+                        parseFloat(
+                            getComputedStyle(tokens[0]).width
+                        ) || 43;
+
+                    /* Estimación deliberadamente holgada:
+                       la física del Hero no construye filas perfectas,
+                       por lo que reservamos espacio para una pila irregular. */
+                    const effectiveWidth =
+                        Math.max(
+                            tokenSize,
+                            width - tokenSize * .35
+                        );
+
+                    const capacity =
+                        Math.max(
+                            1,
+                            Math.floor(
+                                effectiveWidth
+                                / (tokenSize * .62)
+                            )
+                        );
+
+                    const rows =
+                        Math.ceil(
+                            tokens.length / capacity
+                        );
+
+                    const pileHeight =
+                        rows
+                        * tokenSize
+                        * .82;
+
+                    const headroom =
+                        tokenSize * 1.6;
+
+                    const minimum =
+                        window.innerWidth <= 600
+                            ? 240
+                            : window.innerWidth <= 900
+                                ? 290
+                                : 350;
+
+                    requiredHeight =
+                        Math.max(
+                            requiredHeight,
+                            minimum,
+                            pileHeight + headroom
+                        );
+                });
+
+                /* Todas las valoraciones comparten la misma altura para
+                   mantener alineadas las calles del tablero. */
+                pendingLayouts.forEach(layout => {
+                    layout.container.style.minHeight =
+                        Math.ceil(requiredHeight) + "px";
+
+                    layout.container.style.height =
+                        Math.ceil(requiredHeight) + "px";
+                });
+            }
+
+
+            function renderBoard() {
+
+                const board = $("board");
+
+                board.innerHTML = "";
+
+                const pendingLayouts = [];
+
+                const place = $("lugar").value;
+                const date = selectedDate;
+                const filtered = registros.filter(r => r.lugar === place && r.fecha === date);
+
+                renderDailySummary(filtered, place, date);
+
+                streets.forEach( (street, index) => {
+
+                    const column = document.createElement("section");
+                    column.className = "street";
+
+                    const heading = document.createElement("div");
+                    heading.className = "street-heading";
+
+                    const number = document.createElement("span");
+                    number.className = "street-number";
+                    number.textContent = "CALLE 0" + (index + 1);
+
+                    const name = document.createElement("div");
+                    name.className = "street-name";
+                    name.textContent = street;
+                    heading.append(number, name);
+                    column.appendChild(heading);
+
+                    const lane = document.createElement("div");
+                    lane.className = "lane";
+
+                    ["positivo", "negativo"].forEach(value => {
+
+                        const side = document.createElement("div");
+                        side.className = "side";
+
+                        const label = document.createElement("div");
+                        label.className = "side-label";
+                        label.textContent = value === "positivo" ? "Positiva" : "Negativa";
+
+                        const items = filtered.filter(r => r.calle === street && r.valoracion === value);
+                        const total = items.reduce( (sum, r) => sum + Number(r.cantidad || 0), 0);
+
+                        const count = document.createElement("div");
+                        count.className = "side-count";
+                        count.textContent = total + " ficha" + (total === 1 ? "" : "s");
+
+                        const spheres = document.createElement("div");
+                        spheres.className = "spheres";
+
+                        if (total === 0)
+                            side.classList.add("empty");
+
+                        const seedBase = [
+                            place,
+                            date,
+                            street,
+                            value
+                        ].join("|");
+
+                        const tokenSequence =
+                            createStableTokenSequence(
+                                items,
+                                seedBase
+                            );
+
+                        const tokenElements = [];
+
+                        tokenSequence.forEach(
+                            (variable, tokenIndex) => {
+
+                                const token =
+                                    document.createElement("span");
+
+                                token.className =
+                                    "token "
+                                    + variable
+                                    + " token-pending";
+
+                                token.style.animationDelay =
+                                    Math.min(
+                                        tokenIndex * 75,
+                                        2600
+                                    ) + "ms";
+
+                                token.title =
+                                    (variables[variable] || variable)
+                                    + " · "
+                                    + (
+                                        value === "positivo"
+                                            ? "Positiva"
+                                            : "Negativa"
+                                    )
+                                    + " · "
+                                    + street;
+
+                                tokenElements.push(token);
+                                spheres.appendChild(token);
+
+                            }
+                        );
+
+                        if (tokenElements.length) {
+                            pendingLayouts.push({
+                                container: spheres,
+                                tokens: tokenElements,
+                                seedBase
+                            });
+                        }
+
+                        side.append(label, count, spheres);
+                        lane.appendChild(side);
+
+                    });
+
+                    column.appendChild(lane);
+
+                    const streetTotal =
+                        document.createElement("div");
+
+                    streetTotal.className =
+                        "street-total";
+
+                    const total =
+                        filtered
+                            .filter(r => r.calle === street)
+                            .reduce(
+                                (sum, r) =>
+                                    sum
+                                    + Number(r.cantidad || 0),
+                                0
+                            );
+
+                    streetTotal.textContent =
+                        "Total: "
+                        + total
+                        + " fichas";
+
+                    column.appendChild(streetTotal);
+                    board.appendChild(column);
+
+                });
+
+                const total =
+                    filtered.reduce(
+                        (sum, r) =>
+                            sum
+                            + Number(r.cantidad || 0),
+                        0
+                    );
+
+                $("recordSummary").textContent =
+                    filtered.length
+                    + " registros · "
+                    + total
+                    + " fichas · "
+                    + formatDate(date)
+                    + " · "
+                    + $("lugar").selectedOptions[0].textContent;
+
+                if (!filtered.length) {
+                    setStatus(
+                        "No hay registros para esta fecha y ciudad. Selecciona otra fecha o ciudad si hay datos disponibles."
+                    );
+                } else {
+                    setStatus(
+                        "Mostrando "
+                        + total
+                        + " fichas de "
+                        + filtered.length
+                        + " registros."
+                    );
+                }
+
+
+                /* Primero calculamos una altura suficiente para la jornada.
+                   En el frame siguiente Matter.js recibe ya las dimensiones
+                   definitivas y puede construir la pila sin recortes. */
+                requestAnimationFrame(() => {
+
+                    adjustBoardTokenAreaHeight(
+                        pendingLayouts
+                    );
+
+                    requestAnimationFrame(() => {
+
+                        pendingLayouts.forEach(layout => {
+
+                            layoutTokensWithMatter(
+                                layout.container,
+                                layout.tokens,
+                                layout.seedBase
+                            );
+
+                        });
+
+                    });
+
+                });
+            }
+
+            async function loadRecords(showLoading=true) {
+                if (showLoading)
+                    setConnection("Actualizando datos…");
+
+                const {data, error} = await supabaseClient.from("registros").select("id,fecha,lugar,calle,valoracion,variable,cantidad,created_at").order("created_at", {
+                    ascending: true
+                });
+
+                if (error) {
+                    setConnection("Error al conectar");
+                    setStatus("No se pudieron cargar los datos. Comprueba las políticas de lectura de la tabla registros.");
+                    return;
+                }
+
+                registros = data || [];
+                updateDateOptions();
+                renderBoard();
+                setConnection("Conectado · sincronización en tiempo real");
+            }
+
+            function scheduleRefresh() {
+                if (refreshTimer)
+                    clearTimeout(refreshTimer);
+                refreshTimer = setTimeout( () => loadRecords(false), 250);
+            }
+
+            document.querySelectorAll("[data-daily-view]").forEach(button => {
+                button.addEventListener("click", () => {
+                    dailyViewMode = button.dataset.dailyView || "streets";
+
+                    document.querySelectorAll("[data-daily-view]").forEach(tab => {
+                        const active = tab.dataset.dailyView === dailyViewMode;
+                        tab.classList.toggle("active", active);
+                        tab.setAttribute("aria-pressed", String(active));
+                    });
+
+                    const place = $("lugar").value;
+                    const date = selectedDate;
+                    const filtered = registros.filter(item => item.lugar === place && item.fecha === date);
+
+                    renderDailySummary(filtered, place, date);
+                });
+            });
+
+            $("fecha").addEventListener("change", () => {
+                selectedDate = $("fecha").value;
+                renderBoard();
+            });
+
+            $("lugar").addEventListener("change", renderBoard);
+
+            let boardResizeTimer = null;
+
+            window.addEventListener("resize", () => {
+
+                clearTimeout(boardResizeTimer);
+
+                boardResizeTimer =
+                    setTimeout(
+                        () => renderBoard(),
+                        180
+                    );
+
+            });
+
+            async function init() {
+                await loadRecords();
+
+                realtimeChannel = supabaseClient.channel("visualizacion-publica-registros").on("postgres_changes", {
+                    event: "*",
+                    schema: "public",
+                    table: "registros"
+                }, () => scheduleRefresh()).subscribe(status => {
+                    if (status === "SUBSCRIBED")
+                        setConnection("Conectado · sincronización en tiempo real");
+                    else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT")
+                        setConnection("Actualización en tiempo real no disponible");
+                });
+            }
+
+            init();
+
+            function startRain() {
+                const container = document.getElementById("rain");
+
+                if (!container || container.dataset.rainStarted === "true" || !window.Matter)
+                    return;
+                container.dataset.rainStarted = "true";
+
+                const {Engine, Render, Runner, Bodies, Body, Composite, Events} = Matter;
+                const heroPalette = [
+                    {
+                        color: "rgba(255,25,60,.68)",
+                        icon: "assets/picto.ficha.Rojo.svg",
+                        scale: .49,
+                        offsetY: .06
+                    },
+                    {
+                        color: "rgba(0,100,255,.66)",
+                        icon: "assets/picto.ficha.Azul.svg",
+                        scale: .53,
+                        offsetY: .04
+                    },
+                    {
+                        color: "rgba(255,195,0,.72)",
+                        icon: "assets/picto.ficha.Amarillo.svg",
+                        scale: .50,
+                        offsetY: 0
+                    },
+                    {
+                        color: "rgba(0,210,120,.66)",
+                        icon: "assets/picto.ficha.Verde.svg",
+                        scale: .50,
+                        offsetY: 0
+                    }
+                ];
+
+                const heroIcons = new Map();
+
+                heroPalette.forEach(item => {
+                    const image = new Image();
+                    image.src = item.icon;
+                    heroIcons.set(item.icon, image);
+                });
+
+                let width = Math.max(1, container.clientWidth);
+                let height = Math.max(1, container.clientHeight);
+                let pieces = [];
+                let walls = [];
+                let lastSpawn = performance.now();
+                let colorIndex = 0;
+
+                const maxPieces = 300;
+                let spawnInterval = 620;
+                const startedAt = performance.now();
+
+                const engine = Engine.create({
+                    enableSleeping: true
+                });
+
+                engine.gravity.y = .9;
+                engine.gravity.scale = .00105;
+                engine.positionIterations = 12;
+                engine.velocityIterations = 10;
+                engine.constraintIterations = 4;
+
+                const render = Render.create({
+                    element: container,
+                    engine,
+                    options: {
+                        width,
+                        height,
+                        wireframes: false,
+                        background: "transparent",
+                        pixelRatio: Math.min(window.devicePixelRatio || 1, 2)
+                    }
+                });
+
+                const runner = Runner.create({
+                    delta: 1000 / 60,
+                    isFixed: true
+                });
+
+                const random = (min, max) => Math.random() * (max - min) + min;
+
+                function makeWalls() {
+                    walls.forEach(wall => Composite.remove(engine.world, wall));
+                    const thickness = 160;
+
+                    walls = [Bodies.rectangle(width / 2, height + thickness / 2, width + thickness * 2, thickness, {
+                        isStatic: true,
+                        render: {visible: false}
+                    }), Bodies.rectangle(-thickness / 2, height / 2, thickness, height * 3, {
+                        isStatic: true,
+                        render: {visible: false}
+                    }), Bodies.rectangle(width + thickness / 2, height / 2, thickness, height * 3, {
+                        isStatic: true,
+                        render: {visible: false}
+                    })];
+
+                    Composite.add(engine.world, walls);
+                }
+
+                function makePiece() {
+
+                    if (pieces.length >= maxPieces)
+                        return;
+
+                    const radius = width < 500 ? Math.max(22, Math.min(34, width * .075)) : 40;
+                    const x = random(radius * .7, Math.max(radius * .7, width - radius * .7));
+
+                    const piece = Bodies.polygon(x, -80 - random(0, height * .18), 5, radius, {
+                        restitution: 0,
+                        friction: 1,
+                        frictionStatic: 1,
+                        frictionAir: .025,
+                        density: .002,
+                        slop: .04,
+                        sleepThreshold: 18,
+                        angle: random(-.5, .5),
+                        render: {
+                            visible: false
+                        }
+                    });
+
+                    piece.displayRadius = radius * 1.18;
+
+                    const visualStyle =
+                        heroPalette[colorIndex++ % heroPalette.length];
+
+                    piece.pentagonColor = visualStyle.color;
+                    piece.pictogram = visualStyle.icon;
+                    piece.pictogramScale = visualStyle.scale;
+                    piece.pictogramOffsetY = visualStyle.offsetY;
+
+                    piece.plugin = {
+                        settled: false,
+                        settleFrames: 0
+                    };
+
+                    Body.setVelocity(piece, {
+                        x: random(-.12, .12),
+                        y: 0
+                    });
+
+                    Body.setAngularVelocity(piece, random(-.004, .004));
+                    pieces.push(piece);
+                    Composite.add(engine.world, piece);
+                }
+
+                function drawPiece(ctx, piece) {
+                    const radius =
+                        piece.displayRadius
+                        || (piece.circleRadius || 40) * 1.12;
+
+                    ctx.save();
+                    ctx.translate(
+                        piece.position.x,
+                        piece.position.y
+                    );
+                    ctx.rotate(piece.angle);
+
+                    ctx.beginPath();
+
+                    for (let i = 0; i < 5; i++) {
+                        const angle =
+                            -Math.PI / 2
+                            + i * Math.PI * 2 / 5;
+
+                        const x =
+                            Math.cos(angle) * radius;
+
+                        const y =
+                            Math.sin(angle) * radius;
+
+                        if (i === 0)
+                            ctx.moveTo(x, y);
+                        else
+                            ctx.lineTo(x, y);
+                    }
+
+                    ctx.closePath();
+                    ctx.fillStyle = piece.pentagonColor;
+                    ctx.fill();
+
+                    const icon =
+                        heroIcons.get(piece.pictogram);
+
+                    if (
+                        icon
+                        && icon.complete
+                        && icon.naturalWidth > 0
+                    ) {
+                        const iconSize =
+                            radius * 2
+                            * (piece.pictogramScale || .5);
+
+                        const offsetY =
+                            radius
+                            * 2
+                            * (piece.pictogramOffsetY || 0);
+
+                        ctx.globalCompositeOperation =
+                            "source-over";
+
+                        ctx.drawImage(
+                            icon,
+                            -iconSize / 2,
+                            -iconSize / 2 + offsetY,
+                            iconSize,
+                            iconSize
+                        );
+                    }
+
+                    ctx.restore();
+                }
+
+                Events.on(render, "afterRender", () => {
+                    const ctx = render.context;
+                    ctx.save();
+                    ctx.globalCompositeOperation = "multiply";
+                    pieces.forEach(piece => drawPiece(ctx, piece));
+                    ctx.restore();
+                });
+
+                Events.on(engine, "beforeUpdate", () => {
+                    const now = performance.now();
+                    const elapsed = (now - startedAt) / 1000;
+
+                    spawnInterval = Math.max(95, 620 - elapsed * 65);
+
+                    if (now - lastSpawn > spawnInterval && pieces.length < maxPieces) {
+                        makePiece();
+                        lastSpawn = now;
+                    }
+
+                    pieces.forEach(piece => {
+                        if (piece.plugin?.settled)
+                            return;
+                        const speed = Math.hypot(piece.velocity.x, piece.velocity.y);
+
+                        if (speed < .18 && Math.abs(piece.angularVelocity) < .025 && piece.position.y > 0) {
+                            piece.plugin.settleFrames++;
+                            if (piece.plugin.settleFrames > 28) {
+                                Body.setVelocity(piece, {
+                                    x: 0,
+                                    y: 0
+                                });
+                                Body.setAngularVelocity(piece, 0);
+                                Body.setStatic(piece, true);
+                                piece.plugin.settled = true;
+                            }
+                        } else {
+                            piece.plugin.settleFrames = 0;
+                        }
+                    });
+                });
+
+                Events.on(engine, "afterUpdate", () => {
+                    pieces = pieces.filter(piece => {
+                        if (piece.position.y > height + 160) {
+                            Composite.remove(engine.world, piece);
+                            return false;
+                        }
+                        return true;
+                    });
+                });
+
+                function resizeRain() {
+                    const oldWidth = width;
+
+                    width = Math.max(1, container.clientWidth);
+                    height = Math.max(1, container.clientHeight);
+
+                    render.canvas.width = width * render.options.pixelRatio;
+                    render.canvas.height = height * render.options.pixelRatio;
+                    render.canvas.style.width = width + "px";
+                    render.canvas.style.height = height + "px";
+                    render.options.width = width;
+                    render.options.height = height;
+
+                    makeWalls();
+
+                    if (Math.abs(width - oldWidth) > 30) {
+                        pieces.forEach(piece => {
+                            if (piece.position.x > width - piece.displayRadius) {
+                                Body.setPosition(piece, {
+                                    x: Math.max(piece.displayRadius, width - piece.displayRadius),
+                                    y: piece.position.y
+                                });
+                            }
+                        });
+                    }
+                }
+
+                makeWalls();
+                makePiece();
+
+                window.addEventListener("resize", resizeRain);
+
+                if ("ResizeObserver" in window)
+                    new ResizeObserver(resizeRain).observe(container);
+
+                Runner.run(runner, engine);
+                Render.run(render);
+            }
+
+            if (document.readyState === "loading")
+                document.addEventListener("DOMContentLoaded", startRain, {
+                    once: true
+                });
+            else
+                startRain();
+
+        </script>
+        
+    </body>
+
 </html>
