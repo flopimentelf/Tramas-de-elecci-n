@@ -5,6 +5,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Resultados | Taller de Diseño de Servicios 2026</title>
+        <link rel="icon" type="image/svg+xml" href="assets/favicon.resultados.svg">
         <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js"></script>
 
@@ -61,6 +62,18 @@
             }
 
             .hero-meta {text-align: right}
+
+            a {
+                color: inherit;
+                text-decoration: underline;
+                text-decoration-color: rgba(23,23,23,.42);
+                text-decoration-thickness: 1px;
+                text-underline-offset: .2em;
+            }
+
+            a:hover {text-decoration-color: currentColor;}
+            a:focus-visible {outline: 2px solid var(--azul); outline-offset: 3px;}
+            .hero-header a {pointer-events: auto;}
 
             .hero-content {
                 flex: 1;
@@ -417,6 +430,100 @@
                 border-top: 1px solid #aaa;
                 font-size: 9px;
                 color: #555
+            }
+
+            .general-results-notice {
+                display: none;
+                margin: 16px 0 14px;
+                padding: 18px 20px;
+                background: var(--negro);
+                color: #fff;
+                border: 1px solid var(--negro);
+            }
+
+            .general-results-notice.active {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 24px;
+            }
+
+            .general-results-notice strong {
+                display: block;
+                font-size: clamp(20px, 2vw, 30px);
+                line-height: 1.05;
+                letter-spacing: -.03em;
+            }
+
+            .general-results-notice span {
+                max-width: 580px;
+                font-size: 13px;
+                line-height: 1.55;
+                color: rgba(255,255,255,.82);
+            }
+
+            .street-quantitative {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                background: #f4f4f4;
+                border-top: 1px solid #aaa;
+            }
+
+            .street-quantitative-side {
+                min-width: 0;
+                padding: 12px 10px 11px;
+            }
+
+            .street-quantitative-side + .street-quantitative-side {
+                border-left: 1px solid #aaa;
+            }
+
+            .street-quantitative-title {
+                display: block;
+                margin-bottom: 9px;
+                color: #666;
+                font-size: 10px;
+                font-weight: 700;
+                letter-spacing: .05em;
+                text-transform: uppercase;
+            }
+
+            .street-variable-list {
+                display: grid;
+                gap: 6px;
+            }
+
+            .street-variable-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 8px;
+                font-size: 11px;
+                line-height: 1.25;
+            }
+
+            .street-variable-name {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                min-width: 0;
+            }
+
+            .street-variable-dot {
+                width: 10px;
+                height: 10px;
+                flex: 0 0 10px;
+                clip-path: polygon(50% 0%,98% 35%,80% 94%,20% 94%,2% 35%);
+            }
+
+            .street-variable-dot.yellow {background: var(--amarillo);}
+            .street-variable-dot.green {background: var(--verde);}
+            .street-variable-dot.blue {background: var(--azul);}
+            .street-variable-dot.red {background: var(--rojo);}
+
+            .street-variable-row strong {
+                font-variant-numeric: tabular-nums;
+                font-size: 12px;
             }
 
             .board-bottom {
@@ -797,6 +904,12 @@
                 }
 
                 /* LEYENDA */
+                .general-results-notice.active {
+                    align-items: flex-start;
+                    flex-direction: column;
+                    gap: 8px;
+                }
+
                 .board-bottom {
                     grid-template-columns: 1fr;
                     gap: 18px;
@@ -1002,6 +1115,21 @@
 
                 .side-label {font-size: 9px;}
                 .side-count {font-size: 8px;}
+
+                .general-results-notice {
+                    padding: 15px;
+                }
+
+                .general-results-notice strong {font-size: 21px;}
+                .general-results-notice span {font-size: 12px;}
+
+                .street-quantitative-side {
+                    padding: 10px 8px;
+                }
+
+                .street-quantitative-title {font-size: 9px;}
+                .street-variable-row {font-size: 10px;}
+                .street-variable-row strong {font-size: 11px;}
 
                 .board-bottom {
                     min-width: 0;
@@ -1443,6 +1571,109 @@
                 border-top: 0;
             }
 
+            /* =========================================================
+            RESULTADOS POR CIUDAD Y LEYENDA AMPLIADA
+            ========================================================= */
+
+            [hidden] {display: none !important;}
+
+            .boards {display: grid; gap: 16px; min-width: 0;}
+            .city-board {min-width: 0;}
+
+            .city-board-heading {
+                display: flex;
+                justify-content: space-between;
+                align-items: baseline;
+                flex-wrap: wrap;
+                gap: 8px 16px;
+                padding: 12px 14px;
+                border: 1px solid #aaa;
+                border-bottom: 0;
+                background: #fff;
+            }
+
+            .city-board-heading h3 {margin: 0; font-size: clamp(18px, 1.8vw, 26px);}
+            .city-board-heading p {margin: 0; font-size: 13px; color: #555;}
+            .city-board .board {border-bottom: 1px solid #aaa;}
+            .street {display: flex; flex-direction: column;}
+            .street-heading {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                min-height: 85px;
+            }
+            .street-name {overflow-wrap: anywhere; line-height: 1.15;}
+            .street-variable-name {overflow-wrap: anywhere;}
+            .street-variable-row {gap: 4px;}
+            .street-variable-row strong {flex-shrink: 0;}
+            .lane, .street-quantitative {grid-template-columns: repeat(2, minmax(0, 1fr));}
+            .street-quantitative {flex: 1;}
+
+            .board-bottom {
+                grid-template-columns: minmax(0, 1fr);
+                align-items: start;
+                gap: 18px;
+                margin-top: 16px;
+                border-top: 1px solid #aaa;
+            }
+
+            .board-legend {gap: 14px;}
+            .legend-tile .legend-definition {
+                max-width: 290px;
+                margin: 9px 8px 0;
+                font-size: clamp(13px, 1.15vw, 16px);
+                line-height: 1.5;
+                color: #333;
+                font-weight: 400;
+            }
+
+            .board-reading {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px 20px;
+                padding-top: 12px;
+                border-top: 1px solid #aaa;
+                font-size: 13px;
+                line-height: 1.5;
+            }
+            .board-reading p {margin: 0;}
+            .board-reading p:first-child {font-weight: 700;}
+
+            .footer-team {min-width: 0;}
+            .footer-members {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px 16px;
+                margin: 12px 0 0;
+                padding: 0;
+                list-style: none;
+                text-transform: none;
+                letter-spacing: 0;
+                font-size: 14px;
+                line-height: 1.5;
+            }
+            footer > span {text-align: right;}
+
+            @media (min-width: 901px) and (max-width: 1250px) {
+                .street-heading {min-height: 105px;}
+                .street-quantitative-side {padding: 9px 5px;}
+            }
+
+            @media (max-width: 900px) {
+                .city-board-heading p {font-size: 12px;}
+                .legend-tile .legend-definition {font-size: 13px;}
+                .footer-members {font-size: 13px;}
+            }
+
+            @media (max-width: 600px) {
+                .street-heading {min-height: 68px;}
+                .city-board-heading {padding: 10px;}
+                .board-reading {font-size: 12px;}
+                footer {flex-direction: column; gap: 18px;}
+                footer > span {text-align: left;}
+                .footer-members {gap: 8px 14px;}
+            }
+
         </style>
 
     </head>
@@ -1458,10 +1689,12 @@
 
                 <header class="hero-header">
                     <div>
-                        Pontificia Universidad Católica de Valparaíso<br>Escuela de Arquitectura y Diseño
+                        <a href="https://www.pucv.cl/" target="_blank" rel="noopener noreferrer">Pontificia Universidad Católica de Valparaíso</a><br>
+                        <a href="https://www.ead.pucv.cl/" target="_blank" rel="noopener noreferrer">Escuela de Arquitectura y Diseño</a>
                     </div>
                     <div class="hero-meta">
-                        Taller de Diseño de Servicios 2026<br>Investigación territorial
+                        <a href="https://wiki.ead.pucv.cl/Taller_de_Diseño_de_Servicios_2026" target="_blank" rel="noopener noreferrer">Taller de Diseño de Servicios 2026</a><br>
+                        Proyecto Grupal Unidad 3
                     </div>
                 </header>
 
@@ -1506,15 +1739,16 @@
 
             <div class="day-navigation">
 
-                <label for="fecha">Fecha</label>
-                <select id="fecha">
-                    <option value="">Cargando fechas…</option>
-                </select>
-
                 <label for="lugar">Ciudad</label>
                 <select id="lugar">
+                    <option value="__all__" selected>Resultados generales</option>
                     <option value="valparaiso">Valparaíso</option>
                     <option value="buenosaires">Buenos Aires</option>
+                </select>
+
+                <label for="fecha" id="fechaLabel" hidden>Fecha</label>
+                <select id="fecha" hidden disabled>
+                    <option value="__general__">Todas las fechas</option>
                 </select>
 
                 <p>Vista pública de consulta. Los cambios en los registros se reflejan en tiempo real.</p>
@@ -1523,8 +1757,13 @@
 
             <div id="status" class="status" role="status">Cargando registros…</div>
 
+            <div class="general-results-notice" id="generalResultsNotice">
+                <strong>5 FICHAS REGISTRADAS = 1 FICHA VISUAL</strong>
+                <span>En las vistas acumuladas, las fichas de una misma calle, valoración y variable se agrupan de cinco en cinco. Si queda un remanente, se representa con una ficha adicional. Los totales numéricos siempre muestran los valores reales.</span>
+            </div>
+
             <div class="board-wrap">
-                <div class="board" id="board"></div>
+                <div class="boards" id="board"></div>
 
                 <div class="board-bottom">
 
@@ -1538,6 +1777,7 @@
                                 Amarillo
                                 <strong>Luminosidad</strong>
                             </p>
+                            <p class="legend-definition">Luz, visibilidad y sensación de apertura del espacio.</p>
                         </div>
 
                         <div class="legend-tile">
@@ -1548,6 +1788,7 @@
                                 Verde
                                 <strong>Transitabilidad</strong>
                             </p>
+                            <p class="legend-definition">Facilidad para caminar, continuidad y condiciones del tránsito peatonal.</p>
                         </div>
 
                         <div class="legend-tile">
@@ -1558,6 +1799,7 @@
                                 Azul
                                 <strong>Seguridad</strong>
                             </p>
+                            <p class="legend-definition">Sensación de seguridad o exposición durante el recorrido.</p>
                         </div>
 
                         <div class="legend-tile">
@@ -1568,77 +1810,24 @@
                                 Rojo
                                 <strong>Actividad urbana</strong>
                             </p>
+                            <p class="legend-definition">Presencia de personas, comercio y movimiento en la calle.</p>
                         </div>
 
                     </div>
 
-                    <div class="board-question">
-                        <h3>¿Qué nos dicen las fichas?</h3>
-                        <ol>
-                            <li>Cada pentágono representa una ficha registrada.</li>
-                            <li>El color identifica la variable de percepción.</li>
-                            <li>La columna indica la calle elegida.</li>
-                            <li>El lado muestra una valoración positiva o negativa.</li>
-                        </ol>
+                    <div class="board-reading">
+                        <p id="tokenMeaning">Cada pentágono representa una ficha registrada.</p>
+                        <p>La calle y el lado indican el recorrido evaluado y su valoración positiva o negativa.</p>
                     </div>
 
                 </div>
 
                 <div class="board-foot">
-                    <span>Tramas de elección · 2026</span>
+                    <span>Recopilación de Datos · <a href="https://wiki.ead.pucv.cl/Proyecto_de_Visualización_-_Grupo_1" target="_blank" rel="noopener noreferrer">Grupo 1</a></span>
                     <span>Datos compartidos en tiempo real</span>
                 </div>
 
             </div>
-
-            <section class="daily-summary" id="dailySummary">
-
-                <div class="daily-summary-head">
-                    <div>
-                        <div class="daily-summary-label">02 / Lectura cuantitativa</div>
-                        <h3>Ficha del día</h3>
-                    </div>
-                    <div class="daily-summary-meta" id="dailySummaryMeta">—</div>
-                </div>
-
-                <div class="daily-highlights">
-                    <div class="daily-highlight">
-                        <span>Calle más positiva</span>
-                        <strong id="mostPositiveStreet">—</strong>
-                        <small id="mostPositiveStreetValue">—</small>
-                    </div>
-
-                    <div class="daily-highlight">
-                        <span>Calle más negativa</span>
-                        <strong id="mostNegativeStreet">—</strong>
-                        <small id="mostNegativeStreetValue">—</small>
-                    </div>
-
-                    <div class="daily-highlight">
-                        <span>Variable positiva más usada</span>
-                        <strong id="mostPositiveVariable">—</strong>
-                        <small id="mostPositiveVariableValue">—</small>
-                    </div>
-
-                    <div class="daily-highlight">
-                        <span>Variable negativa más usada</span>
-                        <strong id="mostNegativeVariable">—</strong>
-                        <small id="mostNegativeVariableValue">—</small>
-                    </div>
-                </div>
-
-                <div class="daily-summary-toolbar">
-                    <div class="daily-tabs" role="group" aria-label="Vista de datos">
-                        <button class="daily-tab active" type="button" data-daily-view="streets" aria-pressed="true">Por calle</button>
-                        <button class="daily-tab" type="button" data-daily-view="variables" aria-pressed="false">Por variable</button>
-                    </div>
-
-                    <p class="daily-summary-note">Los valores corresponden a la fecha y ciudad seleccionadas.</p>
-                </div>
-
-                <div id="dailyTableContainer"></div>
-
-            </section>
 
             <div class="buenos-aires">
 
@@ -1655,7 +1844,18 @@
             </div>
 
             <footer>
-                <span>Tramas de elección · 2026</span>
+                <div class="footer-team">
+                    <span>Recopilación de Datos · <a href="https://wiki.ead.pucv.cl/Proyecto_de_Visualización_-_Grupo_1" target="_blank" rel="noopener noreferrer">Grupo 1</a></span>
+                    <ul class="footer-members" aria-label="Integrantes del Grupo 1">
+                        <li><a href="https://wiki.ead.pucv.cl/Florencia_Pimentel" target="_blank" rel="noopener noreferrer">Florencia Pimentel</a></li>
+                        <li><a href="https://wiki.ead.pucv.cl/Fabián_Flores" target="_blank" rel="noopener noreferrer">Fabián Flores</a></li>
+                        <li><a href="https://wiki.ead.pucv.cl/Gloria_García" target="_blank" rel="noopener noreferrer">Gloria García</a></li>
+                        <li><a href="https://wiki.ead.pucv.cl/Antonela_Barría" target="_blank" rel="noopener noreferrer">Antonela Barría</a></li>
+                        <li><a href="https://wiki.ead.pucv.cl/Amanda_Garviso" target="_blank" rel="noopener noreferrer">Amanda Garviso</a></li>
+                        <li><a href="https://wiki.ead.pucv.cl/Agustina_Silva" target="_blank" rel="noopener noreferrer">Agustina Silva</a></li>
+                        <li><a href="https://wiki.ead.pucv.cl/Catalina_Esperanza_González_Godoy" target="_blank" rel="noopener noreferrer">Catalina González</a></li>
+                    </ul>
+                </div>
                 <span>Taller de Diseño de Servicios · PUCV</span>
             </footer>
 
@@ -1665,7 +1865,36 @@
             const SUPABASE_URL = "https://mbkyszjxiqxhvqdqpxzd.supabase.co";
             const SUPABASE_KEY = "sb_publishable_g4tlWVRipA6ByuDDBU0PQg_9PS6fvGh";
             const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-            const streets = ["Serrano", "Cochrane", "Blanco", "Errázuriz"];
+            const ALL_CITIES = "__all__";
+            const cities = {
+                valparaiso: {
+                    label: "Valparaíso",
+                    streets: ["Serrano", "Cochrane", "Blanco", "Errázuriz"]
+                },
+                buenosaires: {
+                    label: "Buenos Aires",
+                    streets: ["Avenida Paseo Colón", "Azopardo", "Av. Ingeniero Huergo", "Av. Alicia Moreau de Justo"]
+                }
+            };
+
+            function normalizeText(value) {
+                return String(value || "")
+                    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                    .toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+            }
+
+            function streetKey(value) {
+                return normalizeText(value)
+                    .replace(/^(avenida|av|avda|calle) +/, "")
+                    .replace(/^ing +/, "ingeniero ");
+            }
+
+            function canonicalRecord(record) {
+                const place = normalizeText(record.lugar).replace(/ /g, "");
+                const city = cities[place];
+                const street = city?.streets.find(name => streetKey(name) === streetKey(record.calle));
+                return {...record, lugar: place, calle: street || record.calle};
+            }
             const variables = {
                 blue: "Seguridad",
                 yellow: "Luminosidad",
@@ -1673,11 +1902,14 @@
                 red: "Actividad urbana"
             };
 
+            const GENERAL_DATE = "__general__";
+            const GENERAL_VISUAL_FACTOR = 5;
+
             let registros = [];
-            let selectedDate = "";
+            let selectedDate = GENERAL_DATE;
             let realtimeChannel = null;
             let refreshTimer = null;
-            let dailyViewMode = "streets";
+            let loadVersion = 0;
 
             const $ = id => document.getElementById(id);
             const today = () => {
@@ -1689,6 +1921,8 @@
             function setConnection(message) {$("connectionStatus").textContent = message}
 
             function formatDate(value) {
+                if (value === GENERAL_DATE)
+                    return "Resultados generales";
                 if (!value)
                     return "Sin fecha";
                 const [year,month,day] = value.split("-");
@@ -1697,27 +1931,26 @@
 
             function updateDateOptions() {
                 const select = $("fecha");
-                const dates = [...new Set(registros.map(r => r.fecha).filter(Boolean))].sort( (a, b) => b.localeCompare(a));
+                const place = $("lugar").value;
+                const allCities = place === ALL_CITIES;
+                select.hidden = allCities;
+                $("fechaLabel").hidden = allCities;
+                select.disabled = allCities;
 
-                if (!dates.length) {
-                    select.innerHTML = '<option value="">Sin fechas registradas</option>';
-                    selectedDate = "";
-                    return;
+                const dates = [...new Set(
+                    registros.filter(r => r.lugar === place && Number(r.cantidad) > 0)
+                        .map(r => r.fecha).filter(Boolean)
+                )].sort((a, b) => b.localeCompare(a));
+
+                if (allCities || !dates.includes(selectedDate)) {
+                    selectedDate = GENERAL_DATE;
                 }
 
-                if (!selectedDate || !dates.includes(selectedDate))
-                    selectedDate = dates.includes(today()) ? today() : dates[0];
-                select.innerHTML = "";
-
-                dates.forEach(date => {
-                    const option = document.createElement("option");
-                    option.value = date;
-                    option.textContent = formatDate(date);
-                    select.appendChild(option);
-                });
-
+                select.replaceChildren(new Option("Todas las fechas", GENERAL_DATE));
+                dates.forEach(date => select.add(new Option(formatDate(date), date)));
                 select.value = selectedDate;
             }
+
 
             /* =========================================================
             GENERACIÓN Y MEZCLA ESTABLE DE FICHAS
@@ -1774,13 +2007,7 @@
 
                     if (!(item.variable in counts)) {return;}
 
-                    const quantity = Math.min(
-                        Math.max(
-                            Number(item.cantidad) || 0,
-                            0
-                        ),
-                        200
-                    );
+                    const quantity = Math.max(0, Math.floor(Number(item.cantidad) || 0));
 
                     counts[item.variable] += quantity;
 
@@ -1794,9 +2021,23 @@
             demasiado largos de un mismo color.
             Respetando exactamente
             las cantidades registradas. */
-            function createStableTokenSequence(items, seedBase) {
+            function createStableTokenSequence(items, seedBase, visualFactor=1) {
 
-                const counts = getTokenCounts(items);
+                const sourceCounts =
+                    getTokenCounts(items);
+
+                const counts =
+                    Object.fromEntries(
+                        Object.entries(sourceCounts)
+                            .map(([color, value]) => [
+                                color,
+                                value > 0
+                                    ? Math.ceil(
+                                        value / visualFactor
+                                    )
+                                    : 0
+                            ])
+                    );
 
                 const remaining = {
                     ...counts
@@ -2316,40 +2557,6 @@
                 return records.reduce((sum, item) => sum + Number(item.cantidad || 0), 0);
             }
 
-            function getTopEntry(entries) {
-                if (!entries.length)
-                    return null;
-
-                const max = Math.max(...entries.map(entry => entry.value));
-                const tied = entries.filter(entry => entry.value === max);
-
-                return {
-                    value: max,
-                    labels: tied.map(entry => entry.label)
-                };
-            }
-
-            function variableMarkup(variable) {
-                const label = variables[variable] || variable;
-
-                return '<span class="variable-pill">'
-                    + '<span class="variable-dot ' + variable + '"></span>'
-                    + label
-                    + '</span>';
-            }
-
-            function balanceMarkup(value) {
-                const className = value > 0
-                    ? "balance-positive"
-                    : value < 0
-                        ? "balance-negative"
-                        : "balance-neutral";
-
-                const sign = value > 0 ? "+" : "";
-
-                return '<span class="' + className + '">' + sign + value + '</span>';
-            }
-
             function getVariableCount(records, variable, valuation=null) {
                 return sumRecords(
                     records.filter(item =>
@@ -2359,167 +2566,96 @@
                 );
             }
 
-            function getDominantVariable(records, valuation) {
-                const entries = Object.keys(variables).map(variable => ({
-                    label: variable,
-                    value: getVariableCount(records, variable, valuation)
-                }));
+            function updateGeneralModeInfo(isGeneral) {
+                $("generalResultsNotice")
+                    .classList.toggle(
+                        "active",
+                        isGeneral
+                    );
 
-                const top = getTopEntry(entries);
-
-                if (!top || top.value === 0)
-                    return {label: "—", value: 0, variables: []};
-
-                return {
-                    label: top.labels.map(variable => variables[variable] || variable).join(" / "),
-                    value: top.value,
-                    variables: top.labels
-                };
+                $("tokenMeaning").textContent =
+                    isGeneral
+                        ? "Cada pentágono visual agrupa hasta 5 fichas registradas del mismo tipo."
+                        : "Cada pentágono representa una ficha registrada.";
             }
 
-            function renderDailyStreetTable(filtered) {
-                const rows = streets.map(street => {
-                    const streetRecords = filtered.filter(item => item.calle === street);
-                    const positive = sumRecords(streetRecords.filter(item => item.valoracion === "positivo"));
-                    const negative = sumRecords(streetRecords.filter(item => item.valoracion === "negativo"));
-                    const total = positive + negative;
-                    const positiveVariable = getDominantVariable(streetRecords, "positivo");
-                    const negativeVariable = getDominantVariable(streetRecords, "negativo");
 
-                    const positiveVariableLabel = positiveVariable.variables.length === 1
-                        ? variableMarkup(positiveVariable.variables[0])
-                        : positiveVariable.label;
+            function createStreetQuantitativeSummary(filtered, street) {
+                const wrapper =
+                    document.createElement("div");
 
-                    const negativeVariableLabel = negativeVariable.variables.length === 1
-                        ? variableMarkup(negativeVariable.variables[0])
-                        : negativeVariable.label;
+                wrapper.className =
+                    "street-quantitative";
 
-                    return `
-                        <tr>
-                            <td data-label="Calle"><strong>${street}</strong></td>
-                            <td class="number" data-label="Positivas">${positive}</td>
-                            <td class="number" data-label="Negativas">${negative}</td>
-                            <td class="number" data-label="Total">${total}</td>
-                            <td class="number" data-label="Balance">${balanceMarkup(positive - negative)}</td>
-                            <td class="detail" data-label="Variable + más usada">${positiveVariableLabel} <small>(${positiveVariable.value})</small></td>
-                            <td class="detail" data-label="Variable − más usada">${negativeVariableLabel} <small>(${negativeVariable.value})</small></td>
-                        </tr>
-                    `;
-                }).join("");
+                [
+                    ["positivo", "Positiva"],
+                    ["negativo", "Negativa"]
+                ].forEach(([value, label]) => {
 
-                return `
-                    <div class="daily-table-wrap street-view">
-                        <table class="daily-table street-table">
-                            <thead>
-                                <tr>
-                                    <th>Calle</th>
-                                    <th class="number">+</th>
-                                    <th class="number">−</th>
-                                    <th class="number">Total</th>
-                                    <th class="number">Balance</th>
-                                    <th>Variable + más usada</th>
-                                    <th>Variable − más usada</th>
-                                </tr>
-                            </thead>
-                            <tbody>${rows}</tbody>
-                        </table>
-                    </div>
-                `;
-            }
+                    const side =
+                        document.createElement("div");
 
-            function renderDailyVariableTable(filtered) {
-                const order = ["yellow", "green", "blue", "red"];
+                    side.className =
+                        "street-quantitative-side";
 
-                const rows = order.map(variable => {
-                    const positive = getVariableCount(filtered, variable, "positivo");
-                    const negative = getVariableCount(filtered, variable, "negativo");
-                    const total = positive + negative;
+                    const title =
+                        document.createElement("span");
 
-                    return `
-                        <tr>
-                            <td data-label="Variable">${variableMarkup(variable)}</td>
-                            <td class="number" data-label="Positivas">${positive}</td>
-                            <td class="number" data-label="Negativas">${negative}</td>
-                            <td class="number" data-label="Total">${total}</td>
-                            <td class="number" data-label="Balance">${balanceMarkup(positive - negative)}</td>
-                        </tr>
-                    `;
-                }).join("");
+                    title.className =
+                        "street-quantitative-title";
 
-                return `
-                    <div class="daily-table-wrap variable-view">
-                        <table class="daily-table variable-table">
-                            <thead>
-                                <tr>
-                                    <th>Variable</th>
-                                    <th class="number">+</th>
-                                    <th class="number">−</th>
-                                    <th class="number">Total</th>
-                                    <th class="number">Balance</th>
-                                </tr>
-                            </thead>
-                            <tbody>${rows}</tbody>
-                        </table>
-                    </div>
-                `;
-            }
+                    title.textContent =
+                        "Datos · " + label;
 
-            function renderDailySummary(filtered, place, date) {
-                const container = $("dailyTableContainer");
-                const placeLabel = $("lugar").selectedOptions[0]?.textContent || place;
+                    const list =
+                        document.createElement("div");
 
-                $("dailySummaryMeta").textContent =
-                    formatDate(date) + " · " + placeLabel + " · " + sumRecords(filtered) + " fichas";
+                    list.className =
+                        "street-variable-list";
 
-                if (!filtered.length) {
-                    $("mostPositiveStreet").textContent = "—";
-                    $("mostPositiveStreetValue").textContent = "Sin datos";
-                    $("mostNegativeStreet").textContent = "—";
-                    $("mostNegativeStreetValue").textContent = "Sin datos";
-                    $("mostPositiveVariable").textContent = "—";
-                    $("mostPositiveVariableValue").textContent = "Sin datos";
-                    $("mostNegativeVariable").textContent = "—";
-                    $("mostNegativeVariableValue").textContent = "Sin datos";
-                    container.innerHTML = '<div class="daily-empty">No hay datos disponibles para esta fecha y ciudad.</div>';
-                    return;
-                }
+                    [
+                        ["yellow", "Luminosidad"],
+                        ["green", "Transitabilidad"],
+                        ["blue", "Seguridad"],
+                        ["red", "Actividad urbana"]
+                    ].forEach(([variable, variableLabel]) => {
 
-                const streetPositive = streets.map(street => ({
-                    label: street,
-                    value: sumRecords(filtered.filter(item => item.calle === street && item.valoracion === "positivo"))
-                }));
+                        const valueCount =
+                            getVariableCount(
+                                filtered.filter(
+                                    item =>
+                                        item.calle === street
+                                        && item.valoracion === value
+                                ),
+                                variable
+                            );
 
-                const streetNegative = streets.map(street => ({
-                    label: street,
-                    value: sumRecords(filtered.filter(item => item.calle === street && item.valoracion === "negativo"))
-                }));
+                        const row =
+                            document.createElement("div");
 
-                const topPositiveStreet = getTopEntry(streetPositive);
-                const topNegativeStreet = getTopEntry(streetNegative);
-                const topPositiveVariable = getDominantVariable(filtered, "positivo");
-                const topNegativeVariable = getDominantVariable(filtered, "negativo");
+                        row.className =
+                            "street-variable-row";
 
-                $("mostPositiveStreet").textContent = topPositiveStreet.labels.join(" / ");
-                $("mostPositiveStreetValue").textContent = topPositiveStreet.value + " fichas positivas";
+                        row.innerHTML = `
+                            <span class="street-variable-name">
+                                <span class="street-variable-dot ${variable}"></span>
+                                ${variableLabel}
+                            </span>
+                            <strong>${valueCount}</strong>
+                        `;
 
-                $("mostNegativeStreet").textContent = topNegativeStreet.labels.join(" / ");
-                $("mostNegativeStreetValue").textContent = topNegativeStreet.value + " fichas negativas";
+                        list.appendChild(row);
+                    });
 
-                $("mostPositiveVariable").textContent = topPositiveVariable.label;
-                $("mostPositiveVariableValue").textContent = topPositiveVariable.value + " fichas positivas";
+                    side.append(
+                        title,
+                        list
+                    );
 
-                $("mostNegativeVariable").textContent = topNegativeVariable.label;
-                $("mostNegativeVariableValue").textContent = topNegativeVariable.value + " fichas negativas";
-
-                container.innerHTML = dailyViewMode === "variables"
-                    ? renderDailyVariableTable(filtered)
-                    : renderDailyStreetTable(filtered);
-
-                document.querySelectorAll("[data-daily-view]").forEach(button => {
-                    const active = button.dataset.dailyView === dailyViewMode;
-                    button.classList.toggle("active", active);
-                    button.setAttribute("aria-pressed", String(active));
+                    wrapper.appendChild(side);
                 });
+
+                return wrapper;
             }
 
 
@@ -2528,7 +2664,7 @@
                 if (!pendingLayouts.length)
                     return;
 
-                let requiredHeight = 0;
+                let requiredHeight = window.innerWidth <= 600 ? 240 : window.innerWidth <= 900 ? 290 : 350;
 
                 pendingLayouts.forEach(layout => {
 
@@ -2607,149 +2743,195 @@
 
 
             function renderBoard() {
-
                 const board = $("board");
-
                 board.innerHTML = "";
 
-                const pendingLayouts = [];
-
-                const place = $("lugar").value;
+                const scope = $("lugar").value;
                 const date = selectedDate;
-                const filtered = registros.filter(r => r.lugar === place && r.fecha === date);
+                const allCities = scope === ALL_CITIES;
+                const isGeneral = allCities || date === GENERAL_DATE;
+                const selectedCities = allCities ? Object.keys(cities) : [scope];
 
-                renderDailySummary(filtered, place, date);
+                const filtered = registros.filter(r =>
+                    selectedCities.includes(r.lugar) && (isGeneral || r.fecha === date)
+                );
 
-                streets.forEach( (street, index) => {
+                updateGeneralModeInfo(isGeneral);
+                const layoutGroups = [];
 
-                    const column = document.createElement("section");
-                    column.className = "street";
+                selectedCities.forEach(place => {
+                    const city = cities[place];
+                    const cityRecords = filtered.filter(r => r.lugar === place);
+                    const group = document.createElement("section");
+                    group.className = "city-board";
 
-                    const heading = document.createElement("div");
-                    heading.className = "street-heading";
+                    const cityHeading = document.createElement("header");
+                    cityHeading.className = "city-board-heading";
+                    const cityName = document.createElement("h3");
+                    cityName.textContent = city.label;
+                    const cityTotal = document.createElement("p");
+                    cityTotal.textContent = sumRecords(cityRecords) + " fichas · " + cityRecords.length + " registros";
+                    cityHeading.append(cityName, cityTotal);
+                    group.appendChild(cityHeading);
 
-                    const number = document.createElement("span");
-                    number.className = "street-number";
-                    number.textContent = "CALLE 0" + (index + 1);
+                    const cityBoard = document.createElement("div");
+                    cityBoard.className = "board";
+                    group.appendChild(cityBoard);
+                    board.appendChild(group);
 
-                    const name = document.createElement("div");
-                    name.className = "street-name";
-                    name.textContent = street;
-                    heading.append(number, name);
-                    column.appendChild(heading);
+                    const pendingLayouts = [];
+                    layoutGroups.push(pendingLayouts);
+                    const streets = city.streets;
 
-                    const lane = document.createElement("div");
-                    lane.className = "lane";
+                    streets.forEach( (street, index) => {
 
-                    ["positivo", "negativo"].forEach(value => {
+                        const column = document.createElement("section");
+                        column.className = "street";
 
-                        const side = document.createElement("div");
-                        side.className = "side";
+                        const heading = document.createElement("div");
+                        heading.className = "street-heading";
 
-                        const label = document.createElement("div");
-                        label.className = "side-label";
-                        label.textContent = value === "positivo" ? "Positiva" : "Negativa";
+                        const number = document.createElement("span");
+                        number.className = "street-number";
+                        number.textContent = "CALLE 0" + (index + 1);
 
-                        const items = filtered.filter(r => r.calle === street && r.valoracion === value);
-                        const total = items.reduce( (sum, r) => sum + Number(r.cantidad || 0), 0);
+                        const name = document.createElement("div");
+                        name.className = "street-name";
+                        name.textContent = street;
+                        heading.append(number, name);
+                        column.appendChild(heading);
 
-                        const count = document.createElement("div");
-                        count.className = "side-count";
-                        count.textContent = total + " ficha" + (total === 1 ? "" : "s");
+                        const lane = document.createElement("div");
+                        lane.className = "lane";
 
-                        const spheres = document.createElement("div");
-                        spheres.className = "spheres";
+                        ["positivo", "negativo"].forEach(value => {
 
-                        if (total === 0)
-                            side.classList.add("empty");
+                            const side = document.createElement("div");
+                            side.className = "side";
 
-                        const seedBase = [
-                            place,
-                            date,
-                            street,
-                            value
-                        ].join("|");
+                            const label = document.createElement("div");
+                            label.className = "side-label";
+                            label.textContent = value === "positivo" ? "Positiva" : "Negativa";
 
-                        const tokenSequence =
-                            createStableTokenSequence(
-                                items,
-                                seedBase
+                            const items = cityRecords.filter(r => r.calle === street && r.valoracion === value);
+                            const total = items.reduce( (sum, r) => sum + Number(r.cantidad || 0), 0);
+
+                            const count = document.createElement("div");
+                            count.className = "side-count";
+                            count.textContent = total + " ficha" + (total === 1 ? "" : "s");
+
+                            const spheres = document.createElement("div");
+                            spheres.className = "spheres";
+
+                            if (total === 0)
+                                side.classList.add("empty");
+
+                            const seedBase = [
+                                place,
+                                date,
+                                street,
+                                value
+                            ].join("|");
+
+                            const tokenSequence =
+                                createStableTokenSequence(
+                                    items,
+                                    seedBase,
+                                    isGeneral
+                                        ? GENERAL_VISUAL_FACTOR
+                                        : 1
+                                );
+
+                            const tokenElements = [];
+
+                            tokenSequence.forEach(
+                                (variable, tokenIndex) => {
+
+                                    const token =
+                                        document.createElement("span");
+
+                                    token.className =
+                                        "token "
+                                        + variable
+                                        + " token-pending";
+
+                                    token.style.animationDelay =
+                                        Math.min(
+                                            tokenIndex * 75,
+                                            2600
+                                        ) + "ms";
+
+                                    token.title =
+                                        (variables[variable] || variable)
+                                        + " · "
+                                        + (
+                                            value === "positivo"
+                                                ? "Positiva"
+                                                : "Negativa"
+                                        )
+                                        + " · "
+                                        + street
+                                        + (
+                                            isGeneral
+                                                ? " · Agrupa hasta 5 fichas registradas"
+                                                : ""
+                                        );
+
+                                    tokenElements.push(token);
+                                    spheres.appendChild(token);
+
+                                }
                             );
 
-                        const tokenElements = [];
-
-                        tokenSequence.forEach(
-                            (variable, tokenIndex) => {
-
-                                const token =
-                                    document.createElement("span");
-
-                                token.className =
-                                    "token "
-                                    + variable
-                                    + " token-pending";
-
-                                token.style.animationDelay =
-                                    Math.min(
-                                        tokenIndex * 75,
-                                        2600
-                                    ) + "ms";
-
-                                token.title =
-                                    (variables[variable] || variable)
-                                    + " · "
-                                    + (
-                                        value === "positivo"
-                                            ? "Positiva"
-                                            : "Negativa"
-                                    )
-                                    + " · "
-                                    + street;
-
-                                tokenElements.push(token);
-                                spheres.appendChild(token);
-
-                            }
-                        );
-
-                        if (tokenElements.length) {
                             pendingLayouts.push({
                                 container: spheres,
                                 tokens: tokenElements,
                                 seedBase
                             });
-                        }
 
-                        side.append(label, count, spheres);
-                        lane.appendChild(side);
+                            side.append(label, count, spheres);
+                            lane.appendChild(side);
 
-                    });
+                        });
 
-                    column.appendChild(lane);
+                        column.appendChild(lane);
 
-                    const streetTotal =
-                        document.createElement("div");
+                        const streetTotal =
+                            document.createElement("div");
 
-                    streetTotal.className =
-                        "street-total";
+                        streetTotal.className =
+                            "street-total";
 
-                    const total =
-                        filtered
-                            .filter(r => r.calle === street)
-                            .reduce(
-                                (sum, r) =>
-                                    sum
-                                    + Number(r.cantidad || 0),
-                                0
+                        const total =
+                            cityRecords
+                                .filter(r => r.calle === street)
+                                .reduce(
+                                    (sum, r) =>
+                                        sum
+                                        + Number(r.cantidad || 0),
+                                    0
+                                );
+
+                        streetTotal.textContent =
+                            "Total: "
+                            + total
+                            + " fichas";
+
+                        column.appendChild(streetTotal);
+
+                        const streetQuantitative =
+                            createStreetQuantitativeSummary(
+                                cityRecords,
+                                street
                             );
 
-                    streetTotal.textContent =
-                        "Total: "
-                        + total
-                        + " fichas";
+                        column.appendChild(
+                            streetQuantitative
+                        );
 
-                    column.appendChild(streetTotal);
-                    board.appendChild(column);
+                        cityBoard.appendChild(column);
+
+                    });
 
                 });
 
@@ -2761,53 +2943,60 @@
                         0
                     );
 
+                const scopeLabel = allCities ? "Valparaíso + Buenos Aires" : cities[scope].label;
                 $("recordSummary").textContent =
-                    filtered.length
-                    + " registros · "
-                    + total
-                    + " fichas · "
-                    + formatDate(date)
-                    + " · "
-                    + $("lugar").selectedOptions[0].textContent;
+                    filtered.length + " registros · " + total + " fichas · "
+                    + (isGeneral ? "Resultados acumulados" : formatDate(date)) + " · " + scopeLabel;
 
                 if (!filtered.length) {
-                    setStatus(
-                        "No hay registros para esta fecha y ciudad. Selecciona otra fecha o ciudad si hay datos disponibles."
-                    );
+                    setStatus("No hay registros disponibles para esta selección.");
+                } else if (isGeneral) {
+                    setStatus("Mostrando el acumulado de todos los días de " + scopeLabel + ". Los totales numéricos permanecen exactos.");
                 } else {
-                    setStatus(
-                        "Mostrando "
-                        + total
-                        + " fichas de "
-                        + filtered.length
-                        + " registros."
-                    );
+                    setStatus("Mostrando " + total + " fichas de " + filtered.length + " registros.");
                 }
 
+                const unknownStreets = filtered.filter(r => !cities[r.lugar].streets.includes(r.calle));
+                if (unknownStreets.length) {
+                    $("status").textContent += " Aviso: " + unknownStreets.length + " registros tienen nombres de calle no reconocidos y no aparecen en las columnas.";
+                }
 
-                /* Primero calculamos una altura suficiente para la jornada.
-                   En el frame siguiente Matter.js recibe ya las dimensiones
-                   definitivas y puede construir la pila sin recortes. */
                 requestAnimationFrame(() => {
-
-                    adjustBoardTokenAreaHeight(
-                        pendingLayouts
-                    );
+                    if (!board.firstElementChild || !layoutGroups[0]?.[0]?.container.isConnected) return;
+                    layoutGroups.forEach(adjustBoardTokenAreaHeight);
 
                     requestAnimationFrame(() => {
-
-                        pendingLayouts.forEach(layout => {
-
-                            layoutTokensWithMatter(
-                                layout.container,
-                                layout.tokens,
-                                layout.seedBase
-                            );
-
+                        layoutGroups.forEach(layouts => {
+                            if (!layouts[0]?.container.isConnected) return;
+                            layouts.forEach(layout => {
+                                layoutTokensWithMatter(layout.container, layout.tokens, layout.seedBase);
+                            });
+                            ensurePileHeadroom(layouts);
                         });
-
                     });
+                });
+            }
 
+            /* Amplía solo si la pila calculada supera el borde superior. */
+            function ensurePileHeadroom(layouts) {
+                let extra = 0;
+                layouts.forEach(({container, tokens}) => {
+                    tokens.forEach(token => {
+                        const y = parseFloat(token.style.getPropertyValue("--y"));
+                        const radius = token.offsetWidth * .72;
+                        if (Number.isFinite(y)) extra = Math.max(extra, radius + 12 - y);
+                    });
+                });
+                if (extra <= 0) return;
+                extra = Math.ceil(extra);
+                layouts.forEach(({container, tokens}) => {
+                    const height = container.clientHeight + extra;
+                    container.style.minHeight = height + "px";
+                    container.style.height = height + "px";
+                    tokens.forEach(token => {
+                        const y = parseFloat(token.style.getPropertyValue("--y"));
+                        if (Number.isFinite(y)) token.style.setProperty("--y", (y + extra) + "px");
+                    });
                 });
             }
 
@@ -2815,17 +3004,28 @@
                 if (showLoading)
                     setConnection("Actualizando datos…");
 
-                const {data, error} = await supabaseClient.from("registros").select("id,fecha,lugar,calle,valoracion,variable,cantidad,created_at").order("created_at", {
-                    ascending: true
-                });
+                const version = ++loadVersion;
+                const pageSize = 500;
+                const rows = [];
 
-                if (error) {
-                    setConnection("Error al conectar");
-                    setStatus("No se pudieron cargar los datos. Comprueba las políticas de lectura de la tabla registros.");
-                    return;
+                for (let offset = 0; ; offset += pageSize) {
+                    const {data, error} = await supabaseClient.from("registros")
+                        .select("id,fecha,lugar,calle,valoracion,variable,cantidad,created_at")
+                        .order("created_at", {ascending: true})
+                        .order("id", {ascending: true})
+                        .range(offset, offset + pageSize - 1);
+
+                    if (version !== loadVersion) return;
+                    if (error) {
+                        setConnection("Error al conectar");
+                        setStatus("No se pudieron cargar los datos. Comprueba las políticas de lectura de la tabla registros.");
+                        return;
+                    }
+                    rows.push(...(data || []));
+                    if (!data || data.length < pageSize) break;
                 }
 
-                registros = data || [];
+                registros = rows.map(canonicalRecord);
                 updateDateOptions();
                 renderBoard();
                 setConnection("Conectado · sincronización en tiempo real");
@@ -2837,30 +3037,16 @@
                 refreshTimer = setTimeout( () => loadRecords(false), 250);
             }
 
-            document.querySelectorAll("[data-daily-view]").forEach(button => {
-                button.addEventListener("click", () => {
-                    dailyViewMode = button.dataset.dailyView || "streets";
-
-                    document.querySelectorAll("[data-daily-view]").forEach(tab => {
-                        const active = tab.dataset.dailyView === dailyViewMode;
-                        tab.classList.toggle("active", active);
-                        tab.setAttribute("aria-pressed", String(active));
-                    });
-
-                    const place = $("lugar").value;
-                    const date = selectedDate;
-                    const filtered = registros.filter(item => item.lugar === place && item.fecha === date);
-
-                    renderDailySummary(filtered, place, date);
-                });
-            });
-
             $("fecha").addEventListener("change", () => {
                 selectedDate = $("fecha").value;
                 renderBoard();
             });
 
-            $("lugar").addEventListener("change", renderBoard);
+            $("lugar").addEventListener("change", () => {
+                selectedDate = GENERAL_DATE;
+                updateDateOptions();
+                renderBoard();
+            });
 
             let boardResizeTimer = null;
 
