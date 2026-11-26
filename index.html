@@ -71,7 +71,16 @@
                 text-underline-offset: .2em;
             }
 
-            a:hover {text-decoration-color: currentColor;}
+            a {transition: color .18s ease, text-decoration-color .18s ease;}
+            a[href="https://www.pucv.cl/"] {--institution-hover: #0064d9; --institution-accent: var(--azul);}
+            a[href="https://www.ead.pucv.cl/"] {--institution-hover: #c52b20; --institution-accent: var(--rojo);}
+            a[href*="/Taller_de_Diseño_de_Servicios_2026"] {--institution-hover: #007b49; --institution-accent: var(--verde);}
+            a:hover, a:focus-visible {
+                color: var(--institution-hover, var(--link-hover, #0064d9));
+                text-decoration-color: var(--institution-accent, var(--link-accent, var(--azul)));
+                text-decoration-thickness: 2px;
+            }
+            @media (prefers-reduced-motion: reduce) {a {transition: none;}}
             a:focus-visible {outline: 2px solid var(--azul); outline-offset: 3px;}
             .hero-header a {pointer-events: auto;}
 
@@ -175,6 +184,7 @@
             }
 
             .section-top p {
+                text-align: left;
                 max-width: 410px;
                 color: #555;
                 font-size: 12px;
@@ -1381,7 +1391,7 @@
                 .hero-footer {font-size: 12px;}
 
                 .section-label {font-size: 14px;}
-                .section-top p {max-width: 560px; font-size: 18px; line-height: 1.6;}
+                .section-top p {max-width: 680px; font-size: 18px; line-height: 1.6;}
 
                 .summary {font-size: 15px;}
                 .day-navigation label {font-size: 14px;}
@@ -1603,6 +1613,23 @@
                 min-height: 85px;
             }
             .street-name {overflow-wrap: anywhere; line-height: 1.15;}
+            .combined-board .street-heading {min-height: 118px;}
+            .combined-board .street-name {font-size: clamp(15px, 1.3vw, 22px);}
+            .paired-street {display: block;}
+            .paired-street + .paired-street {margin-top: 6px;}
+            .paired-street small {
+                display: block;
+                color: #666;
+                font-size: 10px;
+                font-weight: 400;
+                margin-bottom: 2px;
+            }
+            .combined-explanation {font-size: 13px; line-height: 1.5;}
+            .spheres > .token.token-stable {
+                animation: none;
+                transform: translate(-50%, -50%) rotate(var(--giro));
+                will-change: auto;
+            }
             .street-variable-name {overflow-wrap: anywhere;}
             .street-variable-row {gap: 4px;}
             .street-variable-row strong {flex-shrink: 0;}
@@ -1626,18 +1653,6 @@
                 color: #333;
                 font-weight: 400;
             }
-
-            .board-reading {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 6px 20px;
-                padding-top: 12px;
-                border-top: 1px solid #aaa;
-                font-size: 13px;
-                line-height: 1.5;
-            }
-            .board-reading p {margin: 0;}
-            .board-reading p:first-child {font-weight: 700;}
 
             .footer-team {min-width: 0;}
             .footer-members {
@@ -1668,10 +1683,200 @@
             @media (max-width: 600px) {
                 .street-heading {min-height: 68px;}
                 .city-board-heading {padding: 10px;}
-                .board-reading {font-size: 12px;}
                 footer {flex-direction: column; gap: 18px;}
                 footer > span {text-align: left;}
                 .footer-members {gap: 8px 14px;}
+            }
+
+
+            /* =========================================================
+            CONTEXTO TERRITORIAL Y CIERRE DEL PROYECTO
+            ========================================================= */
+
+            .section-top p {text-align: left;}
+
+            .buenos-aires {
+                margin: 0;
+                padding: 24px 0;
+                gap: 28px;
+                border-top: 0;
+                border-bottom: 1px solid var(--linea);
+            }
+
+            .buenos-aires p {
+                margin: 0;
+                max-width: 760px;
+                text-align: left;
+            }
+
+            .project-footer {
+                display: block;
+                margin-top: clamp(32px, 5vw, 72px);
+                padding: 0;
+                border-top: 1px solid var(--linea);
+                text-transform: none;
+                letter-spacing: 0;
+                font-size: 15px;
+            }
+
+            .footer-main {
+                display: grid;
+                grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+                align-items: center;
+                gap: clamp(24px, 3vw, 54px);
+                padding: clamp(30px, 4vw, 68px) 0;
+            }
+
+            .footer-credits {
+                display: grid;
+                gap: clamp(26px, 3.5vw, 58px);
+                min-width: 0;
+            }
+
+            .footer-kicker {
+                display: block;
+                color: #555;
+                font-size: clamp(11px, .8vw, 14px);
+                line-height: 1.5;
+                letter-spacing: .065em;
+                text-transform: uppercase;
+            }
+
+            .footer-credits h3 {
+                margin: 7px 0 12px;
+                font-size: clamp(21px, 1.7vw, 30px);
+                line-height: 1.2;
+                letter-spacing: -.025em;
+            }
+
+            .footer-institution p {margin: 8px 0 0; color: #555; line-height: 1.5;}
+
+            .footer-members {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: baseline;
+                gap: 10px clamp(12px, 1.15vw, 22px);
+                margin: 28px 0 0;
+                padding: 0;
+                list-style: none;
+                font-size: clamp(14px, 1.05vw, 18px);
+                line-height: 1.5;
+            }
+
+            .footer-members li {white-space: nowrap; max-width: 100%;}
+
+            .footer-intro-copy {min-width: 0;}
+
+            .footer-intro-copy h2 {
+                margin: 12px 0 20px;
+                font-size: clamp(36px, 4.45vw, 84px);
+                line-height: .99;
+                letter-spacing: -.065em;
+            }
+
+            .footer-intro-copy p {
+                max-width: 490px;
+                margin: 0;
+                color: #555;
+                font-size: clamp(14px, 1vw, 17px);
+                line-height: 1.6;
+            }
+
+            /* Cada palabra parte en negro y se llena letra por letra desde arriba hacia abajo, como un llenado de agua. */
+            .footer-word {display: inline-flex; flex-wrap: nowrap; color: var(--negro);}
+            .footer-word-yellow {--word-color: #946900; --word-delay: 0s;}
+            .footer-word-green {--word-color: #007b49; --word-delay: .8s;}
+            .footer-word-red {--word-color: var(--rojo); --word-delay: 1.6s;}
+            .footer-word-blue {--word-color: var(--azul); --word-delay: 2.4s;}
+            .footer-letter {display: inline-block; color: inherit;}
+
+            @supports ((background-clip: text) or (-webkit-background-clip: text)) {
+                .footer-letter {
+                    background-image: linear-gradient(180deg, var(--word-color) 50%, var(--negro) 50%);
+                    background-size: 100% 200%;
+                    background-position: 0 100%;
+                    background-repeat: no-repeat;
+                    -webkit-background-clip: text;
+                    background-clip: text;
+                    color: transparent;
+                    -webkit-text-fill-color: transparent;
+                    animation: footerLetterFill 8s linear infinite;
+                    animation-delay: calc(var(--word-delay, 0s) + (var(--letter-index, 0) * 0.09s));
+                    animation-play-state: paused;
+                    will-change: background-position;
+                }
+
+                .project-footer.is-visible:not(.animation-paused) .footer-letter {animation-play-state: running;}
+            }
+
+            @keyframes footerLetterFill {
+                0%, 10% {background-position: 0 100%;}
+                45%, 82% {background-position: 0 0%;}
+                100% {background-position: 0 100%;}
+            }
+
+
+            .footer-end {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 12px 20px;
+                padding: 18px 0 0;
+                border-top: 1px solid var(--linea);
+                color: #555;
+                font-size: 12px;
+            }
+
+            .footer-animation-toggle {
+                border: 0;
+                background: none;
+                padding: 4px 0;
+                color: #555;
+                text-decoration: underline;
+                text-underline-offset: .2em;
+                cursor: pointer;
+            }
+
+            .footer-animation-toggle:focus-visible {outline: 2px solid var(--azul); outline-offset: 3px;}
+            .footer-animation-toggle:hover {color: var(--negro);}
+            .footer-top-link {display: inline-flex; gap: 9px; align-items: center; font-size: 14px; color: var(--negro);}
+            .footer-top-link span {font-size: 20px; transition: transform .2s ease;}
+            .footer-top-link:hover span {transform: translateY(-3px);}
+
+            @media (max-width: 1050px) {
+                .footer-main {grid-template-columns: 1fr; gap: 34px;}
+                .footer-intro-copy h2 {font-size: clamp(40px, 7.4vw, 76px);}
+                .footer-members {margin-top: 18px;}
+            }
+
+            @media (max-width: 900px) {
+                .buenos-aires {gap: 16px; padding: 18px 0;}
+            }
+
+            @media (max-width: 600px) {
+                .footer-main {gap: 30px;}
+                .footer-intro-copy h2 {font-size: clamp(31px, 9.2vw, 54px);}
+                .footer-credits h3 {font-size: 21px;}
+                .footer-end {font-size: 11px;}
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                html {scroll-behavior: auto;}
+                .footer-letter {
+                    animation: none;
+                    background: none;
+                    color: var(--negro);
+                    -webkit-text-fill-color: var(--negro);
+                }
+                .footer-animation-toggle {display: none;}
+                .footer-top-link span {transition: none;}
+                .footer-top-link:hover span {transform: none;}
+            }
+
+            @media (forced-colors: active) {
+                .footer-letter {animation: none; background: none; color: CanvasText; -webkit-text-fill-color: CanvasText;}
+                .footer-animation-toggle {display: none;}
             }
 
         </style>
@@ -1680,7 +1885,7 @@
 
     <body>
 
-        <section class="hero">
+        <section class="hero" id="inicio">
 
             <div id="rain"></div>
             <div class="hero-divider"></div>
@@ -1725,8 +1930,22 @@
                         Una elección,<br>muchas percepciones.
                     </h2>
                 </div>
-                <p>Las fichas muestran cómo se distribuyen las valoraciones sobre distintas calles y variables de la experiencia peatonal. La información se actualiza automáticamente a medida que se incorporan nuevos registros.</p>
+                <p>Esta visualización reúne las percepciones recogidas mediante un instrumento participativo en Valparaíso y Buenos Aires. Cada color representa una condición que influye en la elección o el rechazo de una calle. Explora los resultados acumulados o consulta una ciudad y una fecha para conocer las valoraciones registradas. Los datos se actualizan automáticamente.</p>
             </div>
+
+            <section class="buenos-aires" aria-label="Contexto del levantamiento en ambas ciudades">
+
+                <div>
+                    <h3>Valparaíso</h3>
+                    <p>El levantamiento en el Barrio Puerto de Valparaíso explora cómo las condiciones del entorno influyen en la experiencia de caminar y en la elección o el rechazo de sus calles.</p>
+                </div>
+
+                <div>
+                    <h3>Buenos Aires</h3>
+                    <p>Durante la travesía a Buenos Aires, el instrumento se adaptó a cuatro calles de la ciudad. Las mismas variables y valoraciones permiten reunir los datos de ambos territorios bajo un criterio común.</p>
+                </div>
+
+            </section>
 
             <div class="summary">
 
@@ -1751,15 +1970,15 @@
                     <option value="__general__">Todas las fechas</option>
                 </select>
 
-                <p>Vista pública de consulta. Los cambios en los registros se reflejan en tiempo real.</p>
+                <p>Selecciona una ciudad para consultar su acumulado o elegir una jornada de levantamiento.</p>
 
             </div>
 
             <div id="status" class="status" role="status">Cargando registros…</div>
 
             <div class="general-results-notice" id="generalResultsNotice">
-                <strong>5 FICHAS REGISTRADAS = 1 FICHA VISUAL</strong>
-                <span>En las vistas acumuladas, las fichas de una misma calle, valoración y variable se agrupan de cinco en cinco. Si queda un remanente, se representa con una ficha adicional. Los totales numéricos siempre muestran los valores reales.</span>
+                <strong id="visualScaleTitle"></strong>
+                <span id="visualScaleDescription"></span>
             </div>
 
             <div class="board-wrap">
@@ -1815,48 +2034,51 @@
 
                     </div>
 
-                    <div class="board-reading">
-                        <p id="tokenMeaning">Cada pentágono representa una ficha registrada.</p>
-                        <p>La calle y el lado indican el recorrido evaluado y su valoración positiva o negativa.</p>
-                    </div>
-
                 </div>
 
                 <div class="board-foot">
                     <span>Recopilación de Datos · <a href="https://wiki.ead.pucv.cl/Proyecto_de_Visualización_-_Grupo_1" target="_blank" rel="noopener noreferrer">Grupo 1</a></span>
-                    <span>Datos compartidos en tiempo real</span>
+                    <span>Datos actualizados desde los registros del levantamiento</span>
                 </div>
 
             </div>
 
-            <div class="buenos-aires">
+            <footer class="project-footer" aria-label="Créditos del proyecto">
+                <div class="footer-main">
+                    <div class="footer-credits">
+                        <div class="footer-institution">
+                            <span class="footer-kicker">Proyecto académico · Unidad 3</span>
+                            <h3><a href="https://wiki.ead.pucv.cl/Taller_de_Diseño_de_Servicios_2026" target="_blank" rel="noopener noreferrer">Taller de Diseño de Servicios</a></h3>
+                            <p><a href="https://www.ead.pucv.cl/" target="_blank" rel="noopener noreferrer">e[ad]</a> · <a href="https://www.pucv.cl/" target="_blank" rel="noopener noreferrer">PUCV</a></p>
+                            <p>Valparaíso ↔ Buenos Aires · 2026</p>
+                        </div>
+                        <div class="footer-team">
+                            <span class="footer-kicker">Recopilación de datos</span>
+                            <h3><a data-palette-index="4" href="https://wiki.ead.pucv.cl/Proyecto_de_Visualización_-_Grupo_1" target="_blank" rel="noopener noreferrer">Grupo 1</a></h3>
+                            <ul class="footer-members" aria-label="Integrantes del Grupo 1">
+                                <li><a data-palette-index="5" href="https://wiki.ead.pucv.cl/Florencia_Pimentel" target="_blank" rel="noopener noreferrer">Florencia Pimentel</a></li>
+                                <li><a data-palette-index="6" href="https://wiki.ead.pucv.cl/Fabián_Flores" target="_blank" rel="noopener noreferrer">Fabián Flores</a></li>
+                                <li><a data-palette-index="7" href="https://wiki.ead.pucv.cl/Gloria_García" target="_blank" rel="noopener noreferrer">Gloria García</a></li>
+                                <li><a data-palette-index="8" href="https://wiki.ead.pucv.cl/Antonela_Barría" target="_blank" rel="noopener noreferrer">Antonela Barría</a></li>
+                                <li><a data-palette-index="9" href="https://wiki.ead.pucv.cl/Amanda_Garviso" target="_blank" rel="noopener noreferrer">Amanda Garviso</a></li>
+                                <li><a data-palette-index="10" href="https://wiki.ead.pucv.cl/Agustina_Silva" target="_blank" rel="noopener noreferrer">Agustina Silva</a></li>
+                                <li><a data-palette-index="11" href="https://wiki.ead.pucv.cl/Catalina_Esperanza_González_Godoy" target="_blank" rel="noopener noreferrer">Catalina González</a></li>
+                            </ul>
+                        </div>
+                    </div>
 
-                <div>
-                    <h3>Valparaíso</h3>
-                    <p>Las percepciones recogidas permiten observar cómo se experimentan distintas calles a partir de sus condiciones de seguridad, luminosidad, transitabilidad y actividad urbana.</p>
+                    <div class="footer-intro-copy">
+                        <span class="footer-kicker">Tramas de elección · 2026</span>
+                        <h2><span class="footer-word footer-word-yellow">Dos</span> <span class="footer-word footer-word-green">ciudades,</span><br><span class="footer-word footer-word-red">muchas</span> <span class="footer-word footer-word-blue">miradas.</span></h2>
+                        <p>Una investigación colectiva sobre la experiencia de caminar y percibir la ciudad.</p>
+                    </div>
                 </div>
 
-                <div>
-                    <h3>Buenos Aires</h3>
-                    <p>La misma estructura de registro permite reunir y consultar las observaciones de ambas ciudades, manteniendo la relación entre calle, valoración y variable percibida.</p>
+                <div class="footer-end">
+                    <span>Observación · Percepción · Territorio</span>
+                    <button class="footer-animation-toggle" type="button" aria-pressed="false" hidden>Pausar animación</button>
+                    <a class="footer-top-link" href="#inicio">Volver al inicio <span aria-hidden="true">↑</span></a>
                 </div>
-
-            </div>
-
-            <footer>
-                <div class="footer-team">
-                    <span>Recopilación de Datos · <a href="https://wiki.ead.pucv.cl/Proyecto_de_Visualización_-_Grupo_1" target="_blank" rel="noopener noreferrer">Grupo 1</a></span>
-                    <ul class="footer-members" aria-label="Integrantes del Grupo 1">
-                        <li><a href="https://wiki.ead.pucv.cl/Florencia_Pimentel" target="_blank" rel="noopener noreferrer">Florencia Pimentel</a></li>
-                        <li><a href="https://wiki.ead.pucv.cl/Fabián_Flores" target="_blank" rel="noopener noreferrer">Fabián Flores</a></li>
-                        <li><a href="https://wiki.ead.pucv.cl/Gloria_García" target="_blank" rel="noopener noreferrer">Gloria García</a></li>
-                        <li><a href="https://wiki.ead.pucv.cl/Antonela_Barría" target="_blank" rel="noopener noreferrer">Antonela Barría</a></li>
-                        <li><a href="https://wiki.ead.pucv.cl/Amanda_Garviso" target="_blank" rel="noopener noreferrer">Amanda Garviso</a></li>
-                        <li><a href="https://wiki.ead.pucv.cl/Agustina_Silva" target="_blank" rel="noopener noreferrer">Agustina Silva</a></li>
-                        <li><a href="https://wiki.ead.pucv.cl/Catalina_Esperanza_González_Godoy" target="_blank" rel="noopener noreferrer">Catalina González</a></li>
-                    </ul>
-                </div>
-                <span>Taller de Diseño de Servicios · PUCV</span>
             </footer>
 
         </main>
@@ -1892,8 +2114,17 @@
             function canonicalRecord(record) {
                 const place = normalizeText(record.lugar).replace(/ /g, "");
                 const city = cities[place];
-                const street = city?.streets.find(name => streetKey(name) === streetKey(record.calle));
-                return {...record, lugar: place, calle: street || record.calle};
+                const aliases = place === "buenosaires" ? {
+                    "colon": "Avenida Paseo Colón",
+                    "paseo colon": "Avenida Paseo Colón",
+                    "huergo": "Av. Ingeniero Huergo",
+                    "alicia": "Av. Alicia Moreau de Justo",
+                    "alicia moreau": "Av. Alicia Moreau de Justo",
+                    "moreau de justo": "Av. Alicia Moreau de Justo"
+                } : {};
+                const key = streetKey(record.calle);
+                const street = city?.streets.find(name => streetKey(name) === key);
+                return {...record, lugar: place, calle: street || aliases[key] || record.calle};
             }
             const variables = {
                 blue: "Seguridad",
@@ -1903,9 +2134,18 @@
             };
 
             const GENERAL_DATE = "__general__";
-            const GENERAL_VISUAL_FACTOR = 5;
+            // La escala se adapta al volumen de la selección acumulada.
+            // Las jornadas individuales conservan una ficha por registro de voto.
+            function getVisualFactor(total, isGeneral) {
+                if (!isGeneral || total <= 60) return 1;
+                if (total <= 100) return 2;
+                if (total <= 200) return 3;
+                if (total <= 400) return 4;
+                return Math.max(5, Math.ceil(total / 160));
+            }
 
             let registros = [];
+            let hasLoadedRecords = false;
             let selectedDate = GENERAL_DATE;
             let realtimeChannel = null;
             let refreshTimer = null;
@@ -2193,7 +2433,22 @@
             }
 
 
-            function layoutTokensWithMatter(container, tokens, seedBase) {
+            const physicsCache = new Map();
+            const yieldPhysics = () => new Promise(resolve => setTimeout(resolve, 0));
+
+            function applyPhysicsPositions(tokens, positions, animate=true) {
+                positions.forEach((position, index) => {
+                    const token = tokens[index];
+                    for (const [key, value] of Object.entries(position)) {
+                        token.style.setProperty(key, value);
+                    }
+                    token.classList.remove("token-pending");
+                    if (!animate) token.classList.add("token-stable");
+                    else token.addEventListener("animationend", () => token.classList.add("token-stable"), {once: true});
+                });
+            }
+
+            async function layoutTokensWithMatter(container, tokens, seedBase, renderVersion) {
 
                 if (!tokens.length)
                     return;
@@ -2216,6 +2471,12 @@
                 const tokenSize =
                     parseFloat(getComputedStyle(tokens[0]).width)
                     || 43;
+
+                const cacheKey = JSON.stringify([seedBase, width, height, tokenSize, tokens.length]);
+                if (physicsCache.has(cacheKey)) {
+                    applyPhysicsPositions(tokens, physicsCache.get(cacheKey), false);
+                    return;
+                }
 
                 const visualRadius = tokenSize / 2;
 
@@ -2366,6 +2627,8 @@
                     lastSpawnStep + 900;
 
                 let nextSpawn = 0;
+                let sliceStart = performance.now();
+                let remainingBodies = 0;
 
                 for (
                     let step = 0;
@@ -2419,6 +2682,7 @@
                         );
 
                         bodies.push(body);
+                        remainingBodies++;
                         Composite.add(engine.world, body);
 
                         nextSpawn++;
@@ -2467,6 +2731,7 @@
                                 );
 
                                 body.plugin.settled = true;
+                                remainingBodies--;
                             }
 
                         } else {
@@ -2474,8 +2739,21 @@
                         }
 
                     });
+
+                    if (nextSpawn === spawnSchedule.length && remainingBodies === 0) break;
+                    // Cede el hilo principal durante simulaciones largas.
+                    if (performance.now() - sliceStart > 8) {
+                        await yieldPhysics();
+                        if (renderVersion !== boardRenderVersion || !container.isConnected) {
+                            Composite.clear(engine.world, false);
+                            Engine.clear(engine);
+                            return;
+                        }
+                        sliceStart = performance.now();
+                    }
                 }
 
+                const positions = [];
                 bodies.forEach(body => {
 
                     const config =
@@ -2504,41 +2782,19 @@
                     const entryX =
                         config.spawnX - x;
 
-                    token.style.setProperty(
-                        "--x",
-                        x.toFixed(2) + "px"
-                    );
-
-                    token.style.setProperty(
-                        "--y",
-                        y.toFixed(2) + "px"
-                    );
-
-                    token.style.setProperty(
-                        "--giro",
-                        body.angle.toFixed(5) + "rad"
-                    );
-
-                    token.style.setProperty(
-                        "--entrada-x",
-                        entryX.toFixed(2) + "px"
-                    );
-
-                    token.style.setProperty(
-                        "--rebote-x",
-                        (config.bounceX * 6).toFixed(2)
-                        + "px"
-                    );
-
-                    token.style.setProperty(
-                        "--orden",
-                        config.index + 1
-                    );
-
-                    token.classList.remove(
-                        "token-pending"
-                    );
+                    positions[config.index] = {
+                        "--x": x.toFixed(2) + "px",
+                        "--y": y.toFixed(2) + "px",
+                        "--giro": body.angle.toFixed(5) + "rad",
+                        "--entrada-x": entryX.toFixed(2) + "px",
+                        "--rebote-x": (config.bounceX * 6).toFixed(2) + "px",
+                        "--orden": String(config.index + 1)
+                    };
                 });
+
+                physicsCache.set(cacheKey, positions);
+                if (physicsCache.size > 96) physicsCache.delete(physicsCache.keys().next().value);
+                applyPhysicsPositions(tokens, positions);
 
                 Composite.clear(
                     engine.world,
@@ -2566,21 +2822,18 @@
                 );
             }
 
-            function updateGeneralModeInfo(isGeneral) {
-                $("generalResultsNotice")
-                    .classList.toggle(
-                        "active",
-                        isGeneral
-                    );
-
-                $("tokenMeaning").textContent =
-                    isGeneral
-                        ? "Cada pentágono visual agrupa hasta 5 fichas registradas del mismo tipo."
-                        : "Cada pentágono representa una ficha registrada.";
+            function updateGeneralModeInfo(visualFactor) {
+                $("generalResultsNotice").classList.toggle("active", visualFactor > 1);
+                $("visualScaleTitle").textContent = visualFactor + " FICHAS REGISTRADAS = 1 FICHA VISUAL";
+                $("visualScaleDescription").textContent =
+                    "Para facilitar la lectura del acumulado, se agrupan " + visualFactor
+                    + " fichas de la misma variable y valoración dentro de cada columna. "
+                    + "Si quedan menos de " + visualFactor + ", se muestran en un pentágono adicional. "
+                    + "Los números del tablero indican las cantidades reales.";
             }
 
 
-            function createStreetQuantitativeSummary(filtered, street) {
+            function createStreetQuantitativeSummary(streetRecords) {
                 const wrapper =
                     document.createElement("div");
 
@@ -2622,11 +2875,7 @@
 
                         const valueCount =
                             getVariableCount(
-                                filtered.filter(
-                                    item =>
-                                        item.calle === street
-                                        && item.valoracion === value
-                                ),
+                                streetRecords.filter(item => item.valoracion === value),
                                 variable
                             );
 
@@ -2742,7 +2991,10 @@
             }
 
 
+            let boardRenderVersion = 0;
+
             function renderBoard() {
+                const renderVersion = ++boardRenderVersion;
                 const board = $("board");
                 board.innerHTML = "";
 
@@ -2756,19 +3008,23 @@
                     selectedCities.includes(r.lugar) && (isGeneral || r.fecha === date)
                 );
 
-                updateGeneralModeInfo(isGeneral);
+                const visualFactor = getVisualFactor(sumRecords(filtered), isGeneral);
+                updateGeneralModeInfo(visualFactor);
                 const layoutGroups = [];
 
-                selectedCities.forEach(place => {
-                    const city = cities[place];
-                    const cityRecords = filtered.filter(r => r.lugar === place);
+                // El acumulado general empareja las calles por su orden en cada ciudad.
+                // No modifica los registros de origen ni mezcla valoraciones o variables.
+                const groups = allCities ? [ALL_CITIES] : selectedCities;
+                groups.forEach(place => {
+                    const city = allCities ? {label: "Valparaíso + Buenos Aires"} : cities[place];
+                    const cityRecords = allCities ? filtered : filtered.filter(r => r.lugar === place);
                     const group = document.createElement("section");
-                    group.className = "city-board";
+                    group.className = allCities ? "city-board combined-board" : "city-board";
 
                     const cityHeading = document.createElement("header");
                     cityHeading.className = "city-board-heading";
                     const cityName = document.createElement("h3");
-                    cityName.textContent = city.label;
+                    cityName.textContent = allCities ? "Resultados generales · " + city.label : city.label;
                     const cityTotal = document.createElement("p");
                     cityTotal.textContent = sumRecords(cityRecords) + " fichas · " + cityRecords.length + " registros";
                     cityHeading.append(cityName, cityTotal);
@@ -2781,9 +3037,15 @@
 
                     const pendingLayouts = [];
                     layoutGroups.push(pendingLayouts);
-                    const streets = city.streets;
+                    const streets = allCities ? cities.valparaiso.streets : city.streets;
 
-                    streets.forEach( (street, index) => {
+                    streets.forEach((street, index) => {
+                        const partner = allCities ? cities.buenosaires.streets[index] : null;
+                        const streetRecords = cityRecords.filter(r => allCities
+                            ? (r.lugar === "valparaiso" && r.calle === street)
+                                || (r.lugar === "buenosaires" && r.calle === partner)
+                            : r.calle === street);
+                        const streetLabel = partner ? street + " + " + partner : street;
 
                         const column = document.createElement("section");
                         column.className = "street";
@@ -2793,11 +3055,22 @@
 
                         const number = document.createElement("span");
                         number.className = "street-number";
-                        number.textContent = "CALLE 0" + (index + 1);
+                        number.textContent = (allCities ? "PAR 0" : "CALLE 0") + (index + 1);
 
                         const name = document.createElement("div");
                         name.className = "street-name";
-                        name.textContent = street;
+                        if (allCities) {
+                            [["Valparaíso", street], ["Buenos Aires", partner]].forEach(([cityLabel, streetName]) => {
+                                const line = document.createElement("span");
+                                line.className = "paired-street";
+                                const cityTag = document.createElement("small");
+                                cityTag.textContent = cityLabel;
+                                line.append(cityTag, document.createTextNode(streetName));
+                                name.appendChild(line);
+                            });
+                        } else {
+                            name.textContent = street;
+                        }
                         heading.append(number, name);
                         column.appendChild(heading);
 
@@ -2813,7 +3086,7 @@
                             label.className = "side-label";
                             label.textContent = value === "positivo" ? "Positiva" : "Negativa";
 
-                            const items = cityRecords.filter(r => r.calle === street && r.valoracion === value);
+                            const items = streetRecords.filter(r => r.valoracion === value);
                             const total = items.reduce( (sum, r) => sum + Number(r.cantidad || 0), 0);
 
                             const count = document.createElement("div");
@@ -2829,7 +3102,7 @@
                             const seedBase = [
                                 place,
                                 date,
-                                street,
+                                streetLabel,
                                 value
                             ].join("|");
 
@@ -2837,12 +3110,11 @@
                                 createStableTokenSequence(
                                     items,
                                     seedBase,
-                                    isGeneral
-                                        ? GENERAL_VISUAL_FACTOR
-                                        : 1
+                                    visualFactor
                                 );
 
                             const tokenElements = [];
+                            const remainingCounts = getTokenCounts(items);
 
                             tokenSequence.forEach(
                                 (variable, tokenIndex) => {
@@ -2861,6 +3133,8 @@
                                             2600
                                         ) + "ms";
 
+                                    const represented = Math.min(visualFactor, remainingCounts[variable]);
+                                    remainingCounts[variable] -= represented;
                                     token.title =
                                         (variables[variable] || variable)
                                         + " · "
@@ -2870,10 +3144,10 @@
                                                 : "Negativa"
                                         )
                                         + " · "
-                                        + street
+                                        + streetLabel
                                         + (
-                                            isGeneral
-                                                ? " · Agrupa hasta 5 fichas registradas"
+                                            visualFactor > 1
+                                                ? " · Representa " + represented + (represented === 1 ? " ficha registrada" : " fichas registradas")
                                                 : ""
                                         );
 
@@ -2903,9 +3177,7 @@
                             "street-total";
 
                         const total =
-                            cityRecords
-                                .filter(r => r.calle === street)
-                                .reduce(
+                            streetRecords.reduce(
                                     (sum, r) =>
                                         sum
                                         + Number(r.cantidad || 0),
@@ -2921,8 +3193,7 @@
 
                         const streetQuantitative =
                             createStreetQuantitativeSummary(
-                                cityRecords,
-                                street
+                                streetRecords
                             );
 
                         column.appendChild(
@@ -2951,9 +3222,11 @@
                 if (!filtered.length) {
                     setStatus("No hay registros disponibles para esta selección.");
                 } else if (isGeneral) {
-                    setStatus("Mostrando el acumulado de todos los días de " + scopeLabel + ". Los totales numéricos permanecen exactos.");
+                    setStatus(allCities
+                        ? "Se reúnen todas las jornadas de ambas ciudades en cuatro pares de calles, según su orden en el instrumento físico. Los pares permiten reunir las percepciones sin asumir que las calles son espacialmente equivalentes."
+                        : "Se reúnen las percepciones de todas las jornadas de " + scopeLabel + "." + (visualFactor === 1 ? " Cada pentágono representa una ficha registrada." : ""));
                 } else {
-                    setStatus("Mostrando " + total + " fichas de " + filtered.length + " registros.");
+                    setStatus("Jornada del " + formatDate(date) + ": " + total + " fichas registradas. Cada pentágono representa una ficha.");
                 }
 
                 const unknownStreets = filtered.filter(r => !cities[r.lugar].streets.includes(r.calle));
@@ -2961,18 +3234,20 @@
                     $("status").textContent += " Aviso: " + unknownStreets.length + " registros tienen nombres de calle no reconocidos y no aparecen en las columnas.";
                 }
 
+                const firstBoard = board.firstElementChild;
                 requestAnimationFrame(() => {
-                    if (!board.firstElementChild || !layoutGroups[0]?.[0]?.container.isConnected) return;
-                    layoutGroups.forEach(adjustBoardTokenAreaHeight);
+                    if (!firstBoard || board.firstElementChild !== firstBoard) return;
+                    layoutGroups.filter(layouts => layouts.length).forEach(adjustBoardTokenAreaHeight);
 
-                    requestAnimationFrame(() => {
-                        layoutGroups.forEach(layouts => {
-                            if (!layouts[0]?.container.isConnected) return;
-                            layouts.forEach(layout => {
-                                layoutTokensWithMatter(layout.container, layout.tokens, layout.seedBase);
-                            });
+                    requestAnimationFrame(async () => {
+                        for (const layouts of layoutGroups) {
+                            for (const layout of layouts) {
+                                if (renderVersion !== boardRenderVersion || !layout.container.isConnected) return;
+                                await layoutTokensWithMatter(layout.container, layout.tokens, layout.seedBase, renderVersion);
+                            }
+                            if (renderVersion !== boardRenderVersion) return;
                             ensurePileHeadroom(layouts);
-                        });
+                        }
                     });
                 });
             }
@@ -3017,8 +3292,15 @@
 
                     if (version !== loadVersion) return;
                     if (error) {
-                        setConnection("Error al conectar");
-                        setStatus("No se pudieron cargar los datos. Comprueba las políticas de lectura de la tabla registros.");
+                        setConnection("Error al conectar · datos en línea no disponibles");
+                        if (!hasLoadedRecords) {
+                            $("recordSummary").textContent = "Datos no disponibles";
+                            $("board").replaceChildren();
+                            $("generalResultsNotice").classList.remove("active");
+                        }
+                        setStatus(hasLoadedRecords
+                            ? "No se pudieron actualizar los registros. Se muestran los datos de la última consulta correcta."
+                            : "No fue posible consultar los registros. Recarga la página para volver a intentarlo.");
                         return;
                     }
                     rows.push(...(data || []));
@@ -3026,6 +3308,7 @@
                 }
 
                 registros = rows.map(canonicalRecord);
+                hasLoadedRecords = true;
                 updateDateOptions();
                 renderBoard();
                 setConnection("Conectado · sincronización en tiempo real");
@@ -3049,9 +3332,11 @@
             });
 
             let boardResizeTimer = null;
+            let boardWindowWidth = window.innerWidth;
 
             window.addEventListener("resize", () => {
-
+                if (window.innerWidth === boardWindowWidth) return;
+                boardWindowWidth = window.innerWidth;
                 clearTimeout(boardResizeTimer);
 
                 boardResizeTimer =
@@ -3070,12 +3355,26 @@
                     schema: "public",
                     table: "registros"
                 }, () => scheduleRefresh()).subscribe(status => {
-                    if (status === "SUBSCRIBED")
+                    if (status === "SUBSCRIBED" && hasLoadedRecords)
                         setConnection("Conectado · sincronización en tiempo real");
                     else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT")
                         setConnection("Actualización en tiempo real no disponible");
                 });
             }
+
+            // Cada enlace conserva un color de interacción de la paleta.
+            const linkPalette = [
+                ["#946900", "var(--amarillo)"],
+                ["#007b49", "var(--verde)"],
+                ["#0064d9", "var(--azul)"],
+                ["#c52b20", "var(--rojo)"]
+            ];
+            document.querySelectorAll("a[href]").forEach((link, index) => {
+                const paletteIndex = Number(link.dataset.paletteIndex ?? index);
+                const [color, accent] = linkPalette[paletteIndex % linkPalette.length];
+                link.style.setProperty("--link-hover", color);
+                link.style.setProperty("--link-accent", accent);
+            });
 
             init();
 
@@ -3380,8 +3679,30 @@
                 if ("ResizeObserver" in window)
                     new ResizeObserver(resizeRain).observe(container);
 
-                Runner.run(runner, engine);
-                Render.run(render);
+                // El Hero no necesita consumir recursos mientras se lee el tablero.
+                let rainVisible = true;
+                let rainRunning = false;
+                function updateRainActivity() {
+                    const shouldRun = rainVisible && !document.hidden;
+                    if (shouldRun === rainRunning) return;
+                    rainRunning = shouldRun;
+                    if (shouldRun) {
+                        lastSpawn = performance.now();
+                        Runner.run(runner, engine);
+                        Render.run(render);
+                    } else {
+                        Runner.stop(runner);
+                        Render.stop(render);
+                    }
+                }
+                if ("IntersectionObserver" in window) {
+                    new IntersectionObserver(entries => {
+                        rainVisible = entries[0].isIntersecting;
+                        updateRainActivity();
+                    }).observe(container);
+                }
+                document.addEventListener("visibilitychange", updateRainActivity);
+                updateRainActivity();
             }
 
             if (document.readyState === "loading")
@@ -3393,6 +3714,47 @@
 
         </script>
         
+        <script>
+            (() => {
+                const words = document.querySelectorAll(".project-footer .footer-word");
+                words.forEach((word) => {
+                    if (word.dataset.split === "true") return;
+                    const chars = Array.from(word.textContent || "");
+                    word.textContent = "";
+                    chars.forEach((char, index) => {
+                        const letter = document.createElement("span");
+                        letter.className = "footer-letter";
+                        letter.style.setProperty("--letter-index", index);
+                        letter.textContent = char;
+                        word.appendChild(letter);
+                    });
+                    word.dataset.split = "true";
+                });
+            })();
+        </script>
+
+        <script>
+            (() => {
+                const footer = document.querySelector(".project-footer");
+                const toggle = footer.querySelector(".footer-animation-toggle");
+                const supported = CSS.supports("background-clip", "text") || CSS.supports("-webkit-background-clip", "text");
+                if (!supported) return;
+                toggle.hidden = false;
+                toggle.addEventListener("click", () => {
+                    const paused = footer.classList.toggle("animation-paused");
+                    toggle.setAttribute("aria-pressed", String(paused));
+                    toggle.textContent = paused ? "Reanudar animación" : "Pausar animación";
+                });
+                if ("IntersectionObserver" in window) {
+                    new IntersectionObserver(([entry]) => {
+                        footer.classList.toggle("is-visible", entry.isIntersecting);
+                    }).observe(footer);
+                } else {
+                    footer.classList.add("is-visible");
+                }
+            })();
+        </script>
+
     </body>
 
 </html>
